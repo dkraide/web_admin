@@ -73,7 +73,8 @@ export function AuthProvider({children}: AuthProviderProps){
             path: "/" //quais caminhos terao acesso aos cookies
          });
          api.defaults.headers['Authorization'] = `Bearer ${token}`;
-         toast.success('Logado com sucesso')
+         toast.success('Logado com sucesso');
+         window.location.reload();
          Router.push('/dashboard');
         }catch(err: any){
             console.log(err);

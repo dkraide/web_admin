@@ -10,7 +10,7 @@ export function setupAPIClient(ctx = undefined) {
          baseURL: 'https://danielkrd-001-site7.btempurl.com/api',
     //    baseURL: 'https://localhost:3334/api',
         headers: {
-            Authorization: `Bearer ${cookies['@web_front.token']}`,
+            Authorization: `Bearer ${cookies['@web_admin.token']}`,
         }
     });
     api.interceptors.response.use(response => {

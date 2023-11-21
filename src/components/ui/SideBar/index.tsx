@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styles from './styles.module.scss';
 import { useContext, useEffect, useState } from 'react';
-import { faUser, faArrowLeft, faBars, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faArrowLeft, faBars, faRightFromBracket, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { AuthContext } from '@/contexts/AuthContext';
 import IUsuario from '@/interfaces/IUsuario';
 import Link from 'next/link';
@@ -9,11 +9,13 @@ import SelectEmpresa from '@/components/Selects/SelectEmpresa';
 import { api } from '@/services/apiClient';
 import { AxiosError, AxiosResponse } from 'axios';
 import { toast } from 'react-toastify';
+import { Menu, MenuItem, Sidebar, SubMenu } from 'react-pro-sidebar';
 
 export default function SideBar({ ...props }) {
 
     const [user, setUser] = useState<IUsuario | undefined>();
     const [empresa, setEmpresa] = useState(0);
+    const [collapsed, setCollapsed] = useState(false);
     const test = async () => {
         var u = await getUser();
         if (u) {
@@ -25,35 +27,6 @@ export default function SideBar({ ...props }) {
         test();
     }, []);
     const { getUser, signOut, updateUser } = useContext(AuthContext);
-    function changeArrow(eventx: HTMLElement) {
-        let height = 0;
-        const event = eventx.parentNode as HTMLElement;
-        const child = event
-            .getElementsByTagName('span')[0]
-            .getElementsByTagName('div')[0];
-        const ul = event
-            .getElementsByTagName('ul')[0];
-        for (var i = 0; i < ul.children.length; i++) {
-            height += ul.children[i].clientHeight + 5;
-        }
-        if (event.classList.contains(styles.active)) {
-            event.classList.remove(styles.active);
-            child.classList.remove(styles.activeIcon);
-            ul.setAttribute('style', `height:${0}px`);
-        } else {
-            event.classList.add(styles.active);
-            child.classList.add(styles.activeIcon);
-            ul.setAttribute('style', `height:${height}px`);
-        }
-    }
-    function openMenu(event: HTMLElement) {
-        var parent = event.parentNode?.parentNode as HTMLElement;
-        if (parent.classList.contains(styles.activeMenu)) {
-            parent.classList.remove(styles.activeMenu);
-        } else {
-            parent.classList.add(styles.activeMenu);
-        }
-    }
     function forceClose() {
         var menu = document.getElementById("sideBar_krd");
         menu?.classList.remove(styles.activeMenu);
@@ -77,76 +50,45 @@ export default function SideBar({ ...props }) {
             </main>
         </>
     }
+    
+    const menuItemStyle = {
+        background: 'rgb(5,98,180, 0.35)',
+        "&:hover": {
+            background: '#fff !important',
+        },
+    }
+    const textcolor = '#039bda';
+    
     return (
-        <>
-            <aside id="sideBar_krd" className={styles.sideBar}>
-                <header className={styles.sideBarHeader}>
-                    <i onClick={(e) => { openMenu(e.currentTarget) }}><FontAwesomeIcon icon={faBars} /></i>
-                    <Link href={`/dashboard`} prefetch={false}><h1>KRD System</h1></Link>
-                    <p>Bem vindo, <FontAwesomeIcon onClick={() => { signOut() }} className={styles.icon} icon={faRightFromBracket} /></p>
-                    <b>{user?.nome} </b>
-                </header>
-                <nav>
-                    <button>
-                        <span onClick={(e) => { changeArrow(e.currentTarget) }}>
-                            <i><FontAwesomeIcon color={'#fff'} icon={faUser} /></i>
-                            <span>
-                                Empresas
-                            </span>
-                            <div>
-                                <i className="icon"><FontAwesomeIcon color={'#fff'} icon={faArrowLeft} /></i>
-                            </div>
-                        </span>
-                        <ul className={styles.ul}>
-                            <Link className={styles.li} href={'/empresa'}>
-                                <i><FontAwesomeIcon icon={faUser} color={'#fff'} /></i>
-                                <span>Empresas</span>
-                            </Link>
-                            <Link className={styles.li} href={'/backup'}>
-                                <i><FontAwesomeIcon icon={faUser} color={'#fff'} /></i>
-                                <span>Arquivos</span>
-                            </Link>
-                        </ul>
-                    </button>
-                    <button>
-                        <span onClick={(e) => { changeArrow(e.currentTarget) }}>
-                            <i><FontAwesomeIcon color={'#fff'} icon={faUser} /></i>
-                            <span>
-                                Usuarios
-                            </span>
-                            <div>
-                                <i className="icon"><FontAwesomeIcon color={'#fff'} icon={faArrowLeft} /></i>
-                            </div>
-                        </span>
-                        <ul className={styles.ul}>
-                            <Link className={styles.li} href={'/usuario'}>
-                                <i><FontAwesomeIcon icon={faUser} color={'#fff'} /></i>
-                                <span>Usuarios</span>
-                            </Link>
-                        </ul>
-                    </button>
-                    <button>
-                        <span onClick={(e) => { changeArrow(e.currentTarget) }}>
-                            <i><FontAwesomeIcon color={'#fff'} icon={faUser} /></i>
-                            <span>
-                                Financeiro
-                            </span>
-                            <div>
-                                <i className="icon"><FontAwesomeIcon color={'#fff'} icon={faArrowLeft} /></i>
-                            </div>
-                        </span>
-                        <ul className={styles.ul}>
-                            <Link className={styles.li} href={'/financeiro'}>
-                                <i><FontAwesomeIcon icon={faUser} color={'#fff'} /></i>
-                                <span>Duplicatas</span>
-                            </Link>
-                        </ul>
-                    </button>
-                </nav>
-            </aside>
-            <main  {...props} className={styles.main} onClick={() => forceClose()}>
+        <div style={{ display: 'flex', height: '100vh', minHeight: '100% !important' }}>
+            <Sidebar collapsed={collapsed} rootStyles={{
+                backgroundColor: 'rgb(5,98,180)',
 
+                background: 'linear-gradient(180deg, rgba(4,113,190,1) 17%, rgba(3,135,205,1) 52%, rgba(3,155,218,1) 79%, rgba(0,212,255,1) 100%);',
+            }}>
+                <Menu>
+                    <div className={styles.openClose}>
+                        <a onClick={() => { setCollapsed(!collapsed) }}>
+                            <FontAwesomeIcon color={textcolor} icon={!collapsed ? faArrowLeft : faArrowRight} size={'2x'}></FontAwesomeIcon>
+                        </a>
+                    </div>
+                    <div style={{ display: collapsed ? 'none' : 'block', padding: '0px 5px' }}>
+                        <h2 style={{ color: textcolor, fontWeight: 'bold' }}>KRD System</h2>
+                    </div>
+                    <SubMenu icon={<FontAwesomeIcon icon={faUser} color={textcolor} />} {...props} label="Usuarios">
+                        <MenuItem href={'/usuario'} style={menuItemStyle}>Usuarios</MenuItem>
+                    </SubMenu>
+                    <SubMenu icon={<FontAwesomeIcon icon={faUser} color={textcolor} />}  label="Financeiro">
+                        <MenuItem href={'/financeiro'} style={menuItemStyle}> Duplicatas</MenuItem>
+                    </SubMenu>
+                    <SubMenu icon={<FontAwesomeIcon icon={faUser} color={textcolor} />} label="Empresas">
+                        <MenuItem href={'/empresa'} style={menuItemStyle}>Empresas</MenuItem>
+                        <MenuItem href={'/backup'} style={menuItemStyle}>Arquivos</MenuItem>
+                    </SubMenu>
+                </Menu>
+            </Sidebar>
+            <main  {...props} className={styles.main} onClick={() => forceClose()}>
             </main>
-        </>
+        </div>
     )
 }
