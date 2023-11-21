@@ -14,6 +14,8 @@ import { endOfMonth, format, startOfMonth } from 'date-fns';
 import IDuplicata from '@/interfaces/IDuplicata';
 import { Badge } from 'react-bootstrap';
 import SelectEmpresa from '@/components/Selects/SelectEmpresa';
+import DuplicataForm from '@/components/Modals/Financeiro/DuplicataForm';
+import _ from 'lodash';
 
 
 
@@ -67,11 +69,27 @@ export default function Financeiro() {
         return res;
     }
 
+    async function updatePagamento(id: number){
+        var index = _.findIndex(list, p => p.id == id);
+        var x = list[index];
+        x.isPago = !x.isPago;
+        await api.put(`/Financeiro/update`, x)
+        .then(({data}: AxiosResponse) => {
+              list[index] = data;
+              setList([...list]);
+              toast.success(`Sucesso ao atualizar pagamento.`);
+
+        })
+        .catch((err: AxiosError) => {
+                toast.error(`Erro ao atualizar status de pagamento. ${err.response?.data || err.message}`);
+        });
+    }
+
 
     const columns = [
         {
             name: '#',
-            cell: ({ fileName }) => <CustomButton typeButton={'primary'}><FontAwesomeIcon icon={faEdit}/></CustomButton>,
+            cell: ({ id }: IDuplicata) => <CustomButton onClick={() => {setEdit(id)}} typeButton={'primary'}><FontAwesomeIcon icon={faEdit}/></CustomButton>,
             sortable: true,
             width: '5%'
         },
@@ -104,24 +122,24 @@ export default function Financeiro() {
         {
             name: 'Status',
             selector: (row: IDuplicata) => row.isPago,
-            cell: (row: IDuplicata) =>getBadge(row.isPago, row.isCancelado, row.dataVencimento),
+            cell: (row: IDuplicata) =>getBadge(row.id, row.isPago, row.isCancelado, row.dataVencimento),
             sortable: true,
             width: '10%'
         },
     ]
 
-    function getBadge(isPago, isCancelado, vencimento){
+    function getBadge(id, isPago, isCancelado, vencimento){
            if(isCancelado){
-            return <Badge style={{fontSize: '12px'}}  bg={'dark'}>Cancelado</Badge>
+            return <Badge  onClick={() => {updatePagamento(id)}} style={{fontSize: '12px', cursor: 'pointer'}}  bg={'dark'}>Cancelado</Badge>
            }
            if(isPago){
-            return <Badge style={{fontSize: '12px'}}  bg={'primary'}>Pago</Badge>
+            return <Badge onClick={() => {updatePagamento(id)}} style={{fontSize: '12px', cursor: 'pointer'}}  bg={'primary'}>Pago</Badge>
            }
            var venc = new Date(vencimento);
            if(venc >= new Date()){
-                   return <Badge style={{fontSize: '12px'}}  bg={'success'}>Em Aberto</Badge>
+                   return <Badge onClick={() => {updatePagamento(id)}} style={{fontSize: '12px', cursor: 'pointer'}}  bg={'success'}>Em Aberto</Badge>
            }else{
-            return <Badge style={{fontSize: '12px'}}  bg={'danger'}>Vencido</Badge>
+            return <Badge onClick={() => {updatePagamento(id)}} style={{fontSize: '12px', cursor: 'pointer'}}  bg={'danger'}>Vencido</Badge>
            }
 
     }
@@ -142,6 +160,12 @@ export default function Financeiro() {
                 data={getFiltered()}
                 loading={loading}
             />
+            {edit >= 0 && <DuplicataForm id={edit} isOpen={edit >= 0} setClose={(v) => {
+                if(v){
+                    loadData();
+                }
+                setEdit(-1);
+            }}/>}
         </div>
     )
 }

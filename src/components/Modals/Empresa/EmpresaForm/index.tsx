@@ -120,9 +120,10 @@ export default function EmpresaForm({user, isOpen, id, setClose, color }: props)
             ) : (
                 <div className={styles.container}>
                     <InputForm defaultValue={objeto.id} width={'10%'} title={'Cod'}  errors={errors} inputName={"id"} register={register} />
-                    <SelectUsuario width={'25%'} selected={objeto.usuarioDono?.toUpperCase()} setSelected={(c) => {setObjeto({...objeto, usuarioDono: c.userName?.toUpperCase()})}}/>
-                    <SelectStatus width={'25%'} selected={objeto.statusPagamento} title={'Status'} setSelected={(v) => {setObjeto({...objeto, statusPagamento: v})}} />
-                    <SelectSimNao width={'25%'} selected={objeto.liberaBackup} title={'Backup'} setSelected={(v) => {setObjeto({...objeto, liberaBackup: v})}}/>
+                    <SelectUsuario width={'20%'} selected={objeto.usuarioDono?.toUpperCase()} setSelected={(c) => {setObjeto({...objeto, usuarioDono: c.userName?.toUpperCase()})}}/>
+                    <SelectStatus width={'20%'} selected={objeto.statusPagamento} title={'Status'} setSelected={(v) => {setObjeto({...objeto, statusPagamento: v})}} />
+                    <SelectSimNao width={'20%'} selected={objeto.liberaBackup} title={'Backup'} setSelected={(v) => {setObjeto({...objeto, liberaBackup: v})}}/>
+                    <SelectSimNao width={'20%'} selected={objeto.assessoria} title={'Assessoria'} setSelected={(v) => {setObjeto({...objeto, assessoria: v})}}/>
                     <InputForm defaultValue={objeto.cnpj} width={'50%'} title={'CNPJ / CPF'} errors={errors} inputName={"cnpj"} register={register} />
                     <InputForm defaultValue={objeto.inscricaoEstadual} width={'50%'} title={'IE / RG'} errors={errors} inputName={"inscricaoEstadual"} register={register} />
                     <InputForm defaultValue={objeto.nomeFantasia} width={'50%'} title={'Nome Fantasia'} errors={errors} inputName={"nomeFantasia"} register={register} />
@@ -132,7 +133,6 @@ export default function EmpresaForm({user, isOpen, id, setClose, color }: props)
                     <InputForm defaultValue={objeto.complemento} width={'15%'} title={'Compl.'} errors={errors} inputName={"complemento"} register={register} />
                     <InputForm onBlur={getCep} defaultValue={objeto.cep} width={'20%'} title={'CEP'} errors={errors} inputName={"cep"} register={register} />
                     <InputForm defaultValue={objeto.bairro} width={'20%'} title={'Bairro'} errors={errors} inputName={"bairro"} register={register} />
-                    
                     <SelectEstado selected={objeto.uf} setSelected={(v) => {
                         setObjeto({ ...objeto, uf: v.sigla })
                     }} width={'23%'} />

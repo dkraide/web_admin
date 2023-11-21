@@ -93,14 +93,21 @@ export default function Empresa() {
             selector: (row: IEmpresa) => row.statusPagamento ? 'ATIVO' : 'BLOQUEADO',
             cell: (row: IEmpresa) => <CustomButton onClick={() => {changeStatus(row.id, 'status')}} typeButton={row.statusPagamento ? 'success' : 'danger'}>{row.statusPagamento ? 'ATIVO' : 'BLOQUEADO'}</CustomButton>,
             sortable: true,
-            width: '15%'
+            width: '10%'
         },
         {
             name: 'Backup',
             selector: (row: IEmpresa) => row.liberaBackup ? 'SIM' : 'NAO',
             cell: (row: IEmpresa) => <CustomButton onClick={() => {changeStatus(row.id, 'backup')}} typeButton={row.liberaBackup ? 'success' : 'danger'}>{row.liberaBackup ? 'SIM' : 'NAO'}</CustomButton>,
             sortable: true,
-            width: '15%'
+            width: '10%'
+        },
+        {
+            name: 'Assessoria',
+            selector: (row: IEmpresa) => row.assessoria ? 'SIM' : 'NAO',
+            cell: (row: IEmpresa) => <CustomButton onClick={() => {changeStatus(row.id, 'assessoria')}} typeButton={row.assessoria ? 'success' : 'danger'}>{row.assessoria ? 'SIM' : 'NAO'}</CustomButton>,
+            sortable: true,
+            width: '10%'
         },
         {
             name: 'Usuario',
