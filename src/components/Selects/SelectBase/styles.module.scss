@@ -78,3 +78,9 @@
         padding: 3px 0px;
     }
 }
+
+@media screen and (max-width:400px){
+    .header{
+        min-width: 300px !important;
+    }
+}

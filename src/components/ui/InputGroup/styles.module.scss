@@ -73,3 +73,9 @@
       color: var(--danger) !important;
     }
   }
+
+  @media screen and (max-width:400px) {
+    .group{
+      min-width: 50% !important;
+    }
+  }

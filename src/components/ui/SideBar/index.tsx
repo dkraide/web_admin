@@ -10,6 +10,7 @@ import { api } from '@/services/apiClient';
 import { AxiosError, AxiosResponse } from 'axios';
 import { toast } from 'react-toastify';
 import { Menu, MenuItem, Sidebar, SubMenu } from 'react-pro-sidebar';
+import CustomButton from '../Buttons';
 
 export default function SideBar({ ...props }) {
 
@@ -31,17 +32,17 @@ export default function SideBar({ ...props }) {
         var menu = document.getElementById("sideBar_krd");
         menu?.classList.remove(styles.activeMenu);
     }
-    async function updateEmpresa(EmpresaId){
-        if(EmpresaId == user.empresaSelecionada){
+    async function updateEmpresa(EmpresaId) {
+        if (EmpresaId == user.empresaSelecionada) {
             return;
         }
         await api.put(`/Empresa/SetEmpresa?EmpresaId=${EmpresaId}`)
-        .then(({data}: AxiosResponse) => {
-             updateUser(data);
-             window.location.reload();
-        }).catch((err: AxiosError)=> {
+            .then(({ data }: AxiosResponse) => {
+                updateUser(data);
+                window.location.reload();
+            }).catch((err: AxiosError) => {
                 toast.error(`Erro ao atualizar empresa. ${err.response?.data || err.message}`);
-        })
+            })
     }
     if (!user) {
         return <>
@@ -50,7 +51,7 @@ export default function SideBar({ ...props }) {
             </main>
         </>
     }
-    
+
     const menuItemStyle = {
         background: 'rgb(5,98,180, 0.35)',
         "&:hover": {
@@ -58,33 +59,41 @@ export default function SideBar({ ...props }) {
         },
     }
     const textcolor = '#039bda';
-    
+
     return (
         <div style={{ display: 'flex', height: '100vh', minHeight: '100% !important' }}>
             <Sidebar collapsed={collapsed} rootStyles={{
                 backgroundColor: 'rgb(5,98,180)',
-
                 background: 'linear-gradient(180deg, rgba(4,113,190,1) 17%, rgba(3,135,205,1) 52%, rgba(3,155,218,1) 79%, rgba(0,212,255,1) 100%);',
             }}>
-                <Menu>
-                    <div className={styles.openClose}>
-                        <a onClick={() => { setCollapsed(!collapsed) }}>
-                            <FontAwesomeIcon color={textcolor} icon={!collapsed ? faArrowLeft : faArrowRight} size={'2x'}></FontAwesomeIcon>
-                        </a>
+                <Menu rootStyles={{height: '100%', '& ul': {
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column'
+                }}}>
+                    <div className={styles.header}>
+                        <div style={{ width: '80%', display: collapsed ? 'none' : 'block', padding: '5px 5px 0px 0px' }}>
+                            <h4 style={{ color: textcolor, fontWeight: 'bold' }}>KRD System</h4>
+                        </div>
+                        <div className={styles.openClose}>
+                            <a onClick={() => { setCollapsed(!collapsed) }}>
+                                <FontAwesomeIcon color={textcolor} icon={!collapsed ? faArrowLeft : faArrowRight} size={'2x'}></FontAwesomeIcon>
+                            </a>
+                        </div>
                     </div>
-                    <div style={{ display: collapsed ? 'none' : 'block', padding: '0px 5px' }}>
-                        <h2 style={{ color: textcolor, fontWeight: 'bold' }}>KRD System</h2>
-                    </div>
+                    <div style={{flex: '1'}}>
                     <SubMenu icon={<FontAwesomeIcon icon={faUser} color={textcolor} />} {...props} label="Usuarios">
                         <MenuItem href={'/usuario'} style={menuItemStyle}>Usuarios</MenuItem>
                     </SubMenu>
-                    <SubMenu icon={<FontAwesomeIcon icon={faUser} color={textcolor} />}  label="Financeiro">
+                    <SubMenu icon={<FontAwesomeIcon icon={faUser} color={textcolor} />} label="Financeiro">
                         <MenuItem href={'/financeiro'} style={menuItemStyle}> Duplicatas</MenuItem>
                     </SubMenu>
                     <SubMenu icon={<FontAwesomeIcon icon={faUser} color={textcolor} />} label="Empresas">
                         <MenuItem href={'/empresa'} style={menuItemStyle}>Empresas</MenuItem>
                         <MenuItem href={'/backup'} style={menuItemStyle}>Arquivos</MenuItem>
                     </SubMenu>
+                    </div>
+                    <MenuItem rootStyles={{textAlign: 'center'}} onClick={() => {signOut()}} style={menuItemStyle}>Sair</MenuItem>
                 </Menu>
             </Sidebar>
             <main  {...props} className={styles.main} onClick={() => forceClose()}>

@@ -34,7 +34,7 @@ interface inputForm extends InputHTMLAttributes<HTMLInputElement>{
 }
 const InputForm = ({rules, title, width,minWidth, inputName, register, errors, ...rest } : inputForm) => {
     return (
-        <div className={styles["group"]} style={{width: width || '100%', minWidth: minWidth || 'auto'}}>
+        <div  style={{width: width || '100%', minWidth: minWidth }} className={styles["group"]}>
         <span className={errors[inputName] ? styles["error"] : styles['']}>{errors[inputName] && 'campo invalido'}</span>
         <input {...register(inputName, rules)} {...rest} />
         <span className={styles["bar"]}></span>
@@ -46,8 +46,13 @@ const InputForm = ({rules, title, width,minWidth, inputName, register, errors, .
 
   const InputGroupRef = forwardRef<HTMLInputElement, inputProps>(function MyInput(props, ref) {
     const { title, width, minWidth, invalid, error, name,...rest  } = props;
+
+    const style = {
+        width: width || '100%',
+        minWidth: minWidth || 'auto'
+    }
     return (
-        <div className={styles["group"]} style={{width: width || '100%', minWidth: minWidth || 'auto'}}>
+        <div className={styles["group"]} style={{width: width || '100%', minWidth: minWidth || '300px'}}>
             <span className={error ? styles["error"] : styles['']}>{error}</span>
             <input ref={ref}  type="text"   name={name}/>
             <span className={styles["bar"]}></span>
