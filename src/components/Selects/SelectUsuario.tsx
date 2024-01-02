@@ -32,7 +32,7 @@ export  default function SelectUsuario({width, selected, setSelected}: selProps)
         formas.map((forma) => {
             var x = {
                 value: forma.userName?.toUpperCase(),
-                text: forma.userName?.toUpperCase() || ''
+                label: forma.userName?.toUpperCase() || ''
             }
             data.push(x);
         });

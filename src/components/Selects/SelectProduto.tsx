@@ -49,7 +49,7 @@ export default function SelectProduto({ignore, width, selected, setSelected }: s
            }
             var x = {
                 value: forma.id.toString(),
-                text: `${forma.cod.toString()} - ${forma.nome}` || ''
+                label: `${forma.cod.toString()} - ${forma.nome}` || ''
             }
             data.push(x);
         });

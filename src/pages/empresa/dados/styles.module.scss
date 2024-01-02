@@ -1,0 +1,33 @@
+.box{
+    display: flex;
+    flex-direction: column;
+    width: 15%;
+    max-width: 250px;
+    background-color: white;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 5px;
+
+    hr{
+        margin:  2;
+        padding: 0;
+    }
+}
+.value{
+    font-size: 30px;
+    text-align: center;
+}
+.field{
+    text-align: center;
+    font-style: italic;
+}
+.functions{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    button{
+        font-size: 14px;
+        font-weight: bold;
+    }
+}
+

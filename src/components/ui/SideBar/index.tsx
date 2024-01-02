@@ -1,22 +1,26 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styles from './styles.module.scss';
 import { useContext, useEffect, useState } from 'react';
-import { faUser, faArrowLeft, faBars, faRightFromBracket, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faArrowLeft, faBars, faRightFromBracket, faArrowRight, faPowerOff } from '@fortawesome/free-solid-svg-icons';
 import { AuthContext } from '@/contexts/AuthContext';
 import IUsuario from '@/interfaces/IUsuario';
-import Link from 'next/link';
 import SelectEmpresa from '@/components/Selects/SelectEmpresa';
 import { api } from '@/services/apiClient';
 import { AxiosError, AxiosResponse } from 'axios';
 import { toast } from 'react-toastify';
 import { Menu, MenuItem, Sidebar, SubMenu } from 'react-pro-sidebar';
-import CustomButton from '../Buttons';
+import Image from 'next/image';
+import { useWindowSize } from 'rooks';
 
 export default function SideBar({ ...props }) {
 
     const [user, setUser] = useState<IUsuario | undefined>();
     const [empresa, setEmpresa] = useState(0);
     const [collapsed, setCollapsed] = useState(false);
+    const { innerWidth } = useWindowSize();
+    const [toggled, setToggled] = useState(false);
+    const isMobile = innerWidth < 600;
+
     const test = async () => {
         var u = await getUser();
         if (u) {
@@ -51,53 +55,85 @@ export default function SideBar({ ...props }) {
             </main>
         </>
     }
-
-    const menuItemStyle = {
-        background: 'rgb(5,98,180, 0.35)',
-        "&:hover": {
-            background: '#fff !important',
+    const subMenuStyle = {
+        ['& > a']: {
+            '&:hover': {
+                backgroundColor: 'black'
+            },
+            '.ps-open': {
+                fontWeight: 'bold',
+            },
         },
     }
-    const textcolor = '#039bda';
 
     return (
-        <div style={{ display: 'flex', height: '100vh', minHeight: '100% !important' }}>
-            <Sidebar collapsed={collapsed} rootStyles={{
-                backgroundColor: 'rgb(5,98,180)',
-                background: 'linear-gradient(180deg, rgba(4,113,190,1) 17%, rgba(3,135,205,1) 52%, rgba(3,155,218,1) 79%, rgba(0,212,255,1) 100%);',
-            }}>
-                <Menu rootStyles={{height: '100%', '& ul': {
-                    height: '100%',
-                    display: 'flex',
-                    flexDirection: 'column'
-                }}}>
-                    <div className={styles.header}>
-                        <div style={{ width: '80%', display: collapsed ? 'none' : 'block', padding: '5px 5px 0px 0px' }}>
-                            <h4 style={{ color: textcolor, fontWeight: 'bold' }}>KRD System</h4>
+        <div className={"container-scroller"}>
+            <nav className={[styles["navbar"], styles["default-layout-navbar"], styles["col-lg-12"], styles["p-0"], styles["fixed-top"], styles["d-flex"], styles["flex-row"]].join(' ')}>
+                {(collapsed || isMobile) ? <>
+                    <a href={'/dashboard'} className={styles.center} style={{ width: '40px', cursor: 'pointer' }}>
+                        <Image src={'/krd_logo_icon.png'} alt={'krd'} width={35} height={35} />
+                    </a>
+                </> : <>
+                    <a href={'/dashboard'} className={styles.center} style={{ width: '250px', cursor: 'pointer' }}>
+                        <Image src={'/krd_logo.png'} alt={'krd'} width={160} height={60} />
+                    </a>
+                </>}
+                <div style={{ marginRight: 'auto' }}>
+                    <a className={styles["menu-btn"]} onClick={() => { setCollapsed(!collapsed); setToggled(!toggled) }}><FontAwesomeIcon color={'var(--main)'} icon={faBars} /></a>
+                </div>
+                <div style={{ marginRight: 'auto', padding: '5px' }}>
+                    <SelectEmpresa width={'250px'} selected={user.empresaSelecionada} setSelected={(v) => {
+                        updateEmpresa(v);
+                    }} />
+                </div>
+                <div hidden={innerWidth <= 700} style={{ justifyContent: 'flex-end', marginRight: '10px', display: 'flex', flexDirection: 'row' }}>
+                    <span style={{ marginRight: '10px' }}>Bem Vindo, <br /><b>{user.nome}</b></span>
+                    <a className={styles["menu-btn"]} onClick={signOut}><FontAwesomeIcon icon={faPowerOff} color={'var(--main)'} /></a>
+                </div>
+            </nav>
+            <div className={[styles["container-fluid"], styles["page-body-wrapper"]].join(' ')}>
+                <Sidebar
+                    collapsed={collapsed}
+                    customBreakPoint={"600px"}
+                    className={styles.sideBar}
+                    onBackdropClick={() => setToggled(false)}
+                    toggled={toggled}>
+                    <Menu rootStyles={{
+                        background: 'white',
+                        flex: '1',
+                        height: '100%',
+                        paddingTop: innerWidth < 700 ? '70px' : '0',
+                    }} >
+                        <div
+                            hidden={innerWidth > 700}
+                            style={{
+                                padding: '10px 20px',
+                                display: 'flex',
+                                flexDirection: 'row',
+                                flexWrap: 'wrap',
+                                justifyContent: 'space-between'
+                            }}>
+                            <span>Bem Vindo, <br /><b>{user.nome}</b></span>
+                            <a className={styles["menu-btn"]} onClick={signOut}><FontAwesomeIcon icon={faPowerOff} color={'var(--main)'} /></a>
                         </div>
-                        <div className={styles.openClose}>
-                            <a onClick={() => { setCollapsed(!collapsed) }}>
-                                <FontAwesomeIcon color={textcolor} icon={!collapsed ? faArrowLeft : faArrowRight} size={'2x'}></FontAwesomeIcon>
-                            </a>
+                        <div style={{ flex: '1' }}>
+                            <SubMenu rootStyles={subMenuStyle} icon={<FontAwesomeIcon icon={faUser} color={'var(--main)'} />} {...props} label="Usuarios">
+                                <MenuItem href={'/usuario'} >Usuarios</MenuItem>
+                            </SubMenu>
+                            <SubMenu rootStyles={subMenuStyle} icon={<FontAwesomeIcon icon={faUser} color={'var(--main)'} />} label="Financeiro">
+                                <MenuItem href={'/financeiro'} > Duplicatas</MenuItem>
+                            </SubMenu>
+                            <SubMenu rootStyles={subMenuStyle} icon={<FontAwesomeIcon icon={faUser} color={'var(--main)'} />} label="Empresas">
+                                <MenuItem href={'/empresa'} >Empresas</MenuItem>
+                                <MenuItem href={'/empresa/dados'} >Dados</MenuItem>
+                                <MenuItem href={'/backup'} >Arquivos</MenuItem>
+                            </SubMenu>
                         </div>
-                    </div>
-                    <div style={{flex: '1'}}>
-                    <SubMenu icon={<FontAwesomeIcon icon={faUser} color={textcolor} />} {...props} label="Usuarios">
-                        <MenuItem href={'/usuario'} style={menuItemStyle}>Usuarios</MenuItem>
-                    </SubMenu>
-                    <SubMenu icon={<FontAwesomeIcon icon={faUser} color={textcolor} />} label="Financeiro">
-                        <MenuItem href={'/financeiro'} style={menuItemStyle}> Duplicatas</MenuItem>
-                    </SubMenu>
-                    <SubMenu icon={<FontAwesomeIcon icon={faUser} color={textcolor} />} label="Empresas">
-                        <MenuItem href={'/empresa'} style={menuItemStyle}>Empresas</MenuItem>
-                        <MenuItem href={'/backup'} style={menuItemStyle}>Arquivos</MenuItem>
-                    </SubMenu>
-                    </div>
-                    <MenuItem rootStyles={{textAlign: 'center'}} onClick={() => {signOut()}} style={menuItemStyle}>Sair</MenuItem>
-                </Menu>
-            </Sidebar>
-            <main  {...props} className={styles.main} onClick={() => forceClose()}>
-            </main>
+                    </Menu>
+                </Sidebar>
+                <main  {...props} className={styles['main-panel']}>
+                </main>
+            </div>
         </div>
     )
 }
