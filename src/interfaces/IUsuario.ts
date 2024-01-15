@@ -3,6 +3,7 @@ export default interface IUsuario{
     nome: string
     userName: string
     empresaSelecionada: number
+    isContador: boolean
     cpf?: string
     email?: string
     telefone?: string

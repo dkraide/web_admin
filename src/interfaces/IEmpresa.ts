@@ -31,4 +31,5 @@ export default interface IEmpresa{
          formaPagamento: string
          isMatriz: boolean
          assessoria: boolean
+         usuarioContador: string
 }

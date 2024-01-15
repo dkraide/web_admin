@@ -145,6 +145,7 @@ export default function EmpresaForm({user, isOpen, id, setClose, color }: props)
                     <InputForm defaultValue={objeto.valorMensal} width={'10%'} title={'Nro'} errors={errors} inputName={"valorMensal"} register={register} />
                     <InputForm defaultValue={objeto.diaCobranca} width={'10%'} title={'Nro'} errors={errors} inputName={"diaCobranca"} register={register} />
                     <InputForm defaultValue={objeto.formaPagamento} width={'15%'} title={'Forma Pagamento'} errors={errors} inputName={"formaPagamento"} register={register} />
+                    <SelectUsuario onlyContador={true} title={'Contador'} width={'20%'} selected={objeto.usuarioContador?.toUpperCase()} setSelected={(c) => {setObjeto({...objeto, usuarioContador: c.userName?.toUpperCase()})}}/>
                     <InputForm defaultValue={objeto.email} width={'50%'} title={'Email'} errors={errors} inputName={"email"} register={register} />
                     <InputForm defaultValue={objeto.telefone} width={'50%'} title={'Telefone'} errors={errors} inputName={"telefone"} register={register} />
 

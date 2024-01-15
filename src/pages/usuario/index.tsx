@@ -56,6 +56,12 @@ export default function Empresa() {
             width: '5%'
         },
         {
+            name: 'Tipo',
+            selector: (row: IUsuario) => row.isContador ? 'CONTADOR' : 'CLIENTE',
+            sortable: true,
+            width: '10%'
+        },
+        {
             name: 'Nome',
             selector: (row: IUsuario) => row.nome,
             sortable: true,

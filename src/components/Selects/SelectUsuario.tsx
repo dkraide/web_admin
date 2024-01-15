@@ -8,12 +8,14 @@ import _ from "lodash";
 import IUsuario from "@/interfaces/IUsuario";
 
 interface selProps{
-    selected: string;
-    setSelected: (value: any) => void;
-    width?: string;
+    selected: string
+    setSelected: (value: any) => void
+    width?: string
+    title?: string
+    onlyContador?: boolean
 }
 
-export  default function SelectUsuario({width, selected, setSelected}: selProps){
+export  default function SelectUsuario({title, onlyContador, width, selected, setSelected}: selProps){
     const [formas, setFormas] = useState<IUsuario[]>([]);
     const loadFormas = async () => {
            api.get(`/User/List`)
@@ -30,11 +32,13 @@ export  default function SelectUsuario({width, selected, setSelected}: selProps)
     function getData() {
         var data = [] as any[];
         formas.map((forma) => {
-            var x = {
-                value: forma.userName?.toUpperCase(),
-                label: forma.userName?.toUpperCase() || ''
+            if(!onlyContador || (onlyContador && forma.isContador)){
+                var x = {
+                    value: forma.userName?.toUpperCase(),
+                    label: forma.userName?.toUpperCase() || ''
+                }
+                data.push(x);
             }
-            data.push(x);
         });
         return data;
     }
@@ -47,6 +51,6 @@ export  default function SelectUsuario({width, selected, setSelected}: selProps)
     }
 
     return(
-        <SelectBase width={width} datas={getData()} selected={selected?.toString()} title={'Usuario'} setSelected={onSelect}/>
+        <SelectBase width={width} datas={getData()} selected={selected?.toString()} title={title || 'Usuario'} setSelected={onSelect}/>
     )
 }

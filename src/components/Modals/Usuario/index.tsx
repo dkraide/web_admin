@@ -53,6 +53,7 @@ export default function UsuarioForm({ isOpen, id, setClose, color }: props) {
                     setLoading(false);
                 })
         } else {
+            setObjeto({...objeto, isContador: false});
             setLoading(false);
         }
 
@@ -96,6 +97,7 @@ export default function UsuarioForm({ isOpen, id, setClose, color }: props) {
                 <div className={styles.container}>
                     <InputForm defaultValue={objeto.userName} width={'50%'} title={'Usuario'} errors={errors} inputName={"userName"} register={register} />
                     {!id && <InputForm width={'50%'} title={'Senha'} errors={errors} inputName={"passwordHash"} register={register} />}
+                    <SelectSimNao width={'50%'} title={'Contador'} selected={objeto.isContador} setSelected={(v) => {setObjeto({...objeto, isContador: v})}}/>
                     <InputForm defaultValue={objeto.nome} width={'50%'} title={'Nome'} errors={errors} inputName={"nome"} register={register} />
                     <InputForm defaultValue={objeto.cpf} width={'50%'} title={'CPF'} errors={errors} inputName={"cpf"} register={register} />
                     <InputForm defaultValue={objeto.email} width={'50%'} title={'Email'} errors={errors} inputName={"email"} register={register} />
