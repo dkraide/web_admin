@@ -9,13 +9,14 @@ import CustomTable from '@/components/ui/CustomTable';
 import { toast } from 'react-toastify';
 import CustomButton from '@/components/ui/Buttons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {  faEdit } from '@fortawesome/free-solid-svg-icons';
+import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import { endOfMonth, format, startOfMonth } from 'date-fns';
 import IDuplicata from '@/interfaces/IDuplicata';
 import { Badge } from 'react-bootstrap';
 import SelectEmpresa from '@/components/Selects/SelectEmpresa';
 import DuplicataForm from '@/components/Modals/Financeiro/DuplicataForm';
 import _ from 'lodash';
+import DuplicataMassaForm from '@/components/Modals/Financeiro/DuplicataMassaForm';
 
 
 
@@ -30,6 +31,7 @@ export default function Financeiro() {
     const [list, setList] = useState<IDuplicata[]>([])
     const [search, setSearch] = useState<searchProps>()
     const [edit, setEdit] = useState<number>(-1);
+    const [massa, setMassa] = useState(false);
 
     useEffect(() => {
         if (!search) {
@@ -41,16 +43,16 @@ export default function Financeiro() {
     }, [])
 
     const loadData = async () => {
-       
+
         if (!loading) {
             setLoading(true);
         }
         var url = '';
-        if(!search){
+        if (!search) {
             var dateIn = format(startOfMonth(new Date()), 'yyyy-MM-dd');
             var dateFim = format(endOfMonth(new Date()), 'yyyy-MM-dd');
             url = `/Financeiro/List?dataIn=${dateIn}&dataFim=${dateFim}`;
-        }else{
+        } else {
             url = `/Financeiro/List?dataIn=${search.dateIn}&dataFim=${search.dateFim}&Empresa=${search.empresa || 0}&Situacao=0`;
         }
         await api.get(url)
@@ -64,32 +66,32 @@ export default function Financeiro() {
 
     function getFiltered() {
         var res = list.filter(p => {
-            return (p.empresaId + (p.empresa?.nomeFantasia || '')).toLowerCase().includes((search?.searchString || '').toLowerCase()) 
+            return (p.empresaId + (p.empresa?.nomeFantasia || '')).toLowerCase().includes((search?.searchString || '').toLowerCase())
         });
         return res;
     }
 
-    async function updatePagamento(id: number){
+    async function updatePagamento(id: number) {
         var index = _.findIndex(list, p => p.id == id);
         var x = list[index];
         x.isPago = !x.isPago;
         await api.put(`/Financeiro/update`, x)
-        .then(({data}: AxiosResponse) => {
-              list[index] = data;
-              setList([...list]);
-              toast.success(`Sucesso ao atualizar pagamento.`);
+            .then(({ data }: AxiosResponse) => {
+                list[index] = data;
+                setList([...list]);
+                toast.success(`Sucesso ao atualizar pagamento.`);
 
-        })
-        .catch((err: AxiosError) => {
+            })
+            .catch((err: AxiosError) => {
                 toast.error(`Erro ao atualizar status de pagamento. ${err.response?.data || err.message}`);
-        });
+            });
     }
 
 
     const columns = [
         {
             name: '#',
-            cell: ({ id }: IDuplicata) => <CustomButton onClick={() => {setEdit(id)}} typeButton={'primary'}><FontAwesomeIcon icon={faEdit}/></CustomButton>,
+            cell: ({ id }: IDuplicata) => <CustomButton onClick={() => { setEdit(id) }} typeButton={'primary'}><FontAwesomeIcon icon={faEdit} /></CustomButton>,
             sortable: true,
             width: '5%'
         },
@@ -122,25 +124,25 @@ export default function Financeiro() {
         {
             name: 'Status',
             selector: (row: IDuplicata) => row.isPago,
-            cell: (row: IDuplicata) =>getBadge(row.id, row.isPago, row.isCancelado, row.dataVencimento),
+            cell: (row: IDuplicata) => getBadge(row.id, row.isPago, row.isCancelado, row.dataVencimento),
             sortable: true,
             width: '10%'
         },
     ]
 
-    function getBadge(id, isPago, isCancelado, vencimento){
-           if(isCancelado){
-            return <Badge  onClick={() => {updatePagamento(id)}} style={{fontSize: '12px', cursor: 'pointer'}}  bg={'dark'}>Cancelado</Badge>
-           }
-           if(isPago){
-            return <Badge onClick={() => {updatePagamento(id)}} style={{fontSize: '12px', cursor: 'pointer'}}  bg={'primary'}>Pago</Badge>
-           }
-           var venc = new Date(vencimento);
-           if(venc >= new Date()){
-                   return <Badge onClick={() => {updatePagamento(id)}} style={{fontSize: '12px', cursor: 'pointer'}}  bg={'success'}>Em Aberto</Badge>
-           }else{
-            return <Badge onClick={() => {updatePagamento(id)}} style={{fontSize: '12px', cursor: 'pointer'}}  bg={'danger'}>Vencido</Badge>
-           }
+    function getBadge(id, isPago, isCancelado, vencimento) {
+        if (isCancelado) {
+            return <Badge onClick={() => { updatePagamento(id) }} style={{ fontSize: '12px', cursor: 'pointer' }} bg={'dark'}>Cancelado</Badge>
+        }
+        if (isPago) {
+            return <Badge onClick={() => { updatePagamento(id) }} style={{ fontSize: '12px', cursor: 'pointer' }} bg={'primary'}>Pago</Badge>
+        }
+        var venc = new Date(vencimento);
+        if (venc >= new Date()) {
+            return <Badge onClick={() => { updatePagamento(id) }} style={{ fontSize: '12px', cursor: 'pointer' }} bg={'success'}>Em Aberto</Badge>
+        } else {
+            return <Badge onClick={() => { updatePagamento(id) }} style={{ fontSize: '12px', cursor: 'pointer' }} bg={'danger'}>Vencido</Badge>
+        }
 
     }
     return (
@@ -149,23 +151,39 @@ export default function Financeiro() {
             <div className={styles.box}>
                 <InputGroup minWidth={'275px'} type={'date'} value={search?.dateIn} onChange={(v) => { setSearch({ ...search, dateIn: v.target.value }) }} title={'Inicio'} width={'20%'} />
                 <InputGroup minWidth={'275px'} type={'date'} value={search?.dateFim} onChange={(v) => { setSearch({ ...search, dateIn: v.target.value }) }} title={'Final'} width={'20%'} />
-                <SelectEmpresa width={'30%'} selected={search?.empresa} setSelected={(v) => {setSearch({...search, empresa: v})}}/>
-                <div style={{width: '100%'}}>
-                    <CustomButton onClick={() => {loadData()}} typeButton={'dark'}>Pesquisar</CustomButton>
+                <SelectEmpresa width={'30%'} selected={search?.empresa} setSelected={(v) => { setSearch({ ...search, empresa: v }) }} />
+                <div style={{ width: '100%' }}>
+                    <CustomButton onClick={() => { loadData() }} typeButton={'dark'}>Pesquisar</CustomButton>
                 </div>
             </div>
-            <InputGroup width={'50%'} placeholder={'Filtro'} title={'Pesquisar'} value={search?.searchString} onChange={(e) => { setSearch({...search, searchString: e.target.value}) }} />
+            <div style={{margin: '10px 0',
+                         display: 'flex', flexDirection: 'row', flexWrap: 'wrap'}}>
+                <CustomButton typeButton={'dark'} onClick={(v) => {
+                    setMassa(true)
+                }}>Gerar em Massa</CustomButton>
+                <CustomButton typeButton={'dark'} onClick={(v) => {
+                    setEdit(0)
+                }}>Nova Duplicata</CustomButton>
+            </div>
+            <InputGroup width={'50%'} placeholder={'Filtro'} title={'Pesquisar'} value={search?.searchString} onChange={(e) => { setSearch({ ...search, searchString: e.target.value }) }} />
             <CustomTable
                 columns={columns}
                 data={getFiltered()}
                 loading={loading}
             />
             {edit >= 0 && <DuplicataForm id={edit} isOpen={edit >= 0} setClose={(v) => {
-                if(v){
+                if (v) {
                     loadData();
                 }
                 setEdit(-1);
+            }} />}
+            {massa && <DuplicataMassaForm isOpen={massa} setClose={(v) => {
+                if(v){
+                    loadData();
+                }
+                setMassa(false);
             }}/>}
         </div>
+
     )
 }

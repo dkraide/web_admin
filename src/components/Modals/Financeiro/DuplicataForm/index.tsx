@@ -54,6 +54,8 @@ export default function DuplicataForm({isOpen, id, setClose, color }: props) {
                     setLoading(false);
                 })
         }else{
+            setObjeto({dataVencimento: new Date,
+                       valor: 0} as IDuplicata)
             setLoading(false);
         }
 
@@ -94,7 +96,7 @@ export default function DuplicataForm({isOpen, id, setClose, color }: props) {
 
 
     return (
-        <BaseModal height={'50%'} width={'50%'} color={color} title={'Cadastro de Duplicata'} isOpen={isOpen} setClose={setClose}>
+        <BaseModal  color={color} title={'Cadastro de Duplicata'} isOpen={isOpen} setClose={setClose}>
             {loading ? (
                 <Loading  />
             ) : (
