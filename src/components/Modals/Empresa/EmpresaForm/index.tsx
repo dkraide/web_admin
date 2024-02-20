@@ -72,8 +72,8 @@ export default function EmpresaForm({user, isOpen, id, setClose, color }: props)
         objeto.bairro = data.bairro;
         objeto.dataCriacao = new Date(data.dataCriacao);
         objeto.inicioPagamento = new Date(data.inicioPagamento);
-        objeto.valorMensal = fGetNumber(objeto.valorMensal);
-        objeto.diaCobranca = fGetNumber(objeto.diaCobranca);
+        objeto.valorMensal = fGetNumber(data.valorMensal);
+        objeto.diaCobranca = fGetNumber(data.diaCobranca);
         objeto.formaPagamento = data.formaPagamento;
         objeto.email = data.email;
         objeto.telefone = data.telefone;

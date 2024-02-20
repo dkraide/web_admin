@@ -101,7 +101,7 @@ export default function DuplicataForm({isOpen, id, setClose, color }: props) {
                 <Loading  />
             ) : (
                 <div className={styles.container}>
-                    <SelectEmpresa selected={objeto.empresaId} setSelected={(v) => {setObjeto({...objeto, empresaId: v})}}/>
+                    <SelectEmpresa selected={objeto.empresaId} setSelected={(v) => {setObjeto({...objeto, empresaId: v.id})}}/>
                     <InputForm type={'date'} defaultValue={format(new Date(objeto.dataVencimento), 'yyyy-MM-dd')} width={'30%'} title={'Vencimento'}  errors={errors} inputName={"dataVencimento"} register={register} />
                     <InputForm defaultValue={objeto.valor.toFixed(2)} width={'30%'} title={'Valor'}  errors={errors} inputName={"valor"} register={register} />
                     <SelectSimNao width={'30%'} selected={objeto.isPago} title={'Pago'} setSelected={(v) => {setObjeto({...objeto, isPago: v})}} />
