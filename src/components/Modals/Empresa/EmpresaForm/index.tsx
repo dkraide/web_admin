@@ -142,8 +142,8 @@ export default function EmpresaForm({user, isOpen, id, setClose, color }: props)
                     <h3 style={{width: '100%'}}>Dados Cobranca</h3>
                     <InputForm defaultValue={format(new Date(objeto.dataCriacao || new Date()), 'yyyy-MM-dd')} width={'15%'} type={'date'} title={'Criacao'} errors={errors} inputName={"dataCriacao"} register={register} />
                     <InputForm defaultValue={format(new Date(objeto.inicioPagamento|| new Date()), 'yyyy-MM-dd')} width={'15%'} type={'date'} title={'Pagamento'} errors={errors} inputName={"inicioPagamento"} register={register} />
-                    <InputForm defaultValue={objeto.valorMensal} width={'10%'} title={'Nro'} errors={errors} inputName={"valorMensal"} register={register} />
-                    <InputForm defaultValue={objeto.diaCobranca} width={'10%'} title={'Nro'} errors={errors} inputName={"diaCobranca"} register={register} />
+                    <InputForm defaultValue={objeto.valorMensal} width={'10%'} title={'Valor'} errors={errors} inputName={"valorMensal"} register={register} />
+                    <InputForm defaultValue={objeto.diaCobranca} width={'10%'} title={'Dia do Mes'} errors={errors} inputName={"diaCobranca"} register={register} />
                     <InputForm defaultValue={objeto.formaPagamento} width={'15%'} title={'Forma Pagamento'} errors={errors} inputName={"formaPagamento"} register={register} />
                     <SelectUsuario onlyContador={true} title={'Contador'} width={'20%'} selected={objeto.usuarioContador?.toUpperCase()} setSelected={(c) => {setObjeto({...objeto, usuarioContador: c.userName?.toUpperCase()})}}/>
                     <InputForm defaultValue={objeto.email} width={'50%'} title={'Email'} errors={errors} inputName={"email"} register={register} />
