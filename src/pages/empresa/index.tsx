@@ -14,6 +14,7 @@ import ClasseForm from '@/components/Modals/ClasseMaterial/CreateEditForm';
 import IUsuario from '@/interfaces/IUsuario';
 import IEmpresa from '@/interfaces/IEmpresa';
 import EmpresaForm from '@/components/Modals/Empresa/EmpresaForm';
+import { fGetOnlyNumber } from '@/utils/functions';
 
 
 export default function Empresa() {
@@ -47,7 +48,7 @@ export default function Empresa() {
 
     function getFiltered() {
         var res = classes.filter(p => {
-            return (p.nomeFantasia + p.id.toString() + p.usuarioDono).toLowerCase().includes(search.toLowerCase())
+            return (p.nomeFantasia + p.id.toString() + p.usuarioDono + fGetOnlyNumber(p.cnpj) + fGetOnlyNumber(p.inscricaoEstadual)).toLowerCase().includes(search.toLowerCase())
         });
         return res;
     }
