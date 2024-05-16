@@ -48,7 +48,7 @@ export default function Empresa() {
 
     function getFiltered() {
         var res = classes.filter(p => {
-            return (p.nomeFantasia + p.id.toString() + p.usuarioDono + fGetOnlyNumber(p.cnpj) + fGetOnlyNumber(p.inscricaoEstadual)).toLowerCase().includes(search.toLowerCase())
+            return (p.nomeFantasia + p.id.toString() + p.usuarioDono + fGetOnlyNumber(p.cnpj || '') + fGetOnlyNumber(p.inscricaoEstadual  || '')).toLowerCase().includes(search.toLowerCase())
         });
         return res;
     }
