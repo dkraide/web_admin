@@ -66,14 +66,9 @@ export default function Empresa() {
 
     const columns = [
         {
-            name: '#',
-            cell: ({ id }) => <CustomButton onClick={() => {setEdit(id)}} typeButton={'warning'}><FontAwesomeIcon icon={faEdit}/></CustomButton>,
-            sortable: true,
-            width: '5%'
-        },
-        {
             name: 'Id',
             selector: row => row['id'],
+            cell: ({ id }) => <CustomButton onClick={() => {setEdit(id)}} typeButton={'warning'}>{id}</CustomButton>,
             sortable: true,
             width: '5%'
         },
@@ -87,7 +82,13 @@ export default function Empresa() {
             name: 'Nome Fantasia',
             selector: row => row['nomeFantasia'],
             sortable: true,
-            width: '30%'
+            width: '25%'
+        },
+        {
+            name: 'Telefone',
+            selector: (row: IEmpresa) => row.telefone,
+            sortable: true,
+            width: '10%'
         },
         {
             name: 'Status',
