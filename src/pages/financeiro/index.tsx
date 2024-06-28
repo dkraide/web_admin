@@ -9,7 +9,7 @@ import CustomTable from '@/components/ui/CustomTable';
 import { toast } from 'react-toastify';
 import CustomButton from '@/components/ui/Buttons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit } from '@fortawesome/free-solid-svg-icons';
+import { faBarcode, faEdit, faPrint } from '@fortawesome/free-solid-svg-icons';
 import { endOfMonth, format, startOfMonth } from 'date-fns';
 import IDuplicata from '@/interfaces/IDuplicata';
 import { Badge } from 'react-bootstrap';
@@ -87,6 +87,18 @@ export default function Financeiro() {
             });
     }
 
+    async function geraBoleto(duplicataId){
+        setLoading(true);
+        await api.post(`/Boleto/CreateBoleto?duplicataId=${duplicataId}`)
+        .then(({data}) => {
+            toast.success(`Boleto gerado com sucesso!`);
+            loadData();
+        }).catch((err) => {
+            toast.error(`Ops... parece que houve um erro para gerar o boleto. Confira os dados do cliente!`);
+        })
+        setLoading(false);
+    }
+
 
     const columns = [
         {
@@ -99,7 +111,7 @@ export default function Financeiro() {
             name: 'Empresa',
             selector: (row: IDuplicata) => row.empresa?.nomeFantasia || '',
             sortable: true,
-            width: '50%'
+            width: '30%'
         },
         {
             name: 'Emissao',
@@ -118,6 +130,35 @@ export default function Financeiro() {
         {
             name: 'Valor',
             selector: (row: IDuplicata) => `R$ ${row.valor.toFixed(2)}`,
+            sortable: true,
+            width: '10%'
+        },
+        {
+            name: 'Boleto',
+            selector: (row: IDuplicata) => row.boletoId,
+            cell: (row:IDuplicata) => row.boletoId ? 
+            <>
+             <CustomButton size={'sm'} typeButton={'primary'}
+                           style={{marginRight: 5}}
+                           onClick={() => {
+                              window.open(row.url, 'about-blank')
+                           }}
+             ><FontAwesomeIcon icon={faPrint}/></CustomButton>
+             <CustomButton size={'sm'}  typeButton={'primary'}
+            onClick={() => {
+                navigator.clipboard.writeText(row.codBarras);
+                toast.success(`Codigo copiado!`)
+             }}
+             ><FontAwesomeIcon icon={faBarcode}/></CustomButton>
+            </> : 
+            <>
+            <CustomButton size={'sm'} typeButton={'dark'}
+                           style={{marginRight: 5}}
+                           onClick={() => {
+                             geraBoleto(row.id);
+                           }}
+             ><b>Gerar</b></CustomButton>
+            </>,
             sortable: true,
             width: '10%'
         },
@@ -150,7 +191,7 @@ export default function Financeiro() {
             <h4>Financeiro</h4>
             <div className={styles.box}>
                 <InputGroup minWidth={'275px'} type={'date'} value={search?.dateIn} onChange={(v) => { setSearch({ ...search, dateIn: v.target.value }) }} title={'Inicio'} width={'20%'} />
-                <InputGroup minWidth={'275px'} type={'date'} value={search?.dateFim} onChange={(v) => { setSearch({ ...search, dateIn: v.target.value }) }} title={'Final'} width={'20%'} />
+                <InputGroup minWidth={'275px'} type={'date'} value={search?.dateFim} onChange={(v) => { setSearch({ ...search, dateFim: v.target.value }) }} title={'Final'} width={'20%'} />
                 <SelectEmpresa width={'30%'} selected={search?.empresa} setSelected={(v) => { setSearch({ ...search, empresa: v }) }} />
                 <div style={{ width: '100%' }}>
                     <CustomButton onClick={() => { loadData() }} typeButton={'dark'}>Pesquisar</CustomButton>

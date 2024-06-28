@@ -19,4 +19,6 @@ export default interface IDuplicata{
  numeroRPS: string
  numeroNFSE: string
  serieNFSE: string
+ url?: string
+ boletoId?:string
 }
