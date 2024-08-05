@@ -9,7 +9,7 @@ import CustomTable from '@/components/ui/CustomTable';
 import { toast } from 'react-toastify';
 import CustomButton from '@/components/ui/Buttons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBarcode, faEdit, faPrint } from '@fortawesome/free-solid-svg-icons';
+import { faBarcode, faEdit, faEnvelope, faMailBulk, faPhone, faPrint } from '@fortawesome/free-solid-svg-icons';
 import { endOfMonth, format, startOfMonth } from 'date-fns';
 import IDuplicata from '@/interfaces/IDuplicata';
 import { Badge } from 'react-bootstrap';
@@ -17,6 +17,7 @@ import SelectEmpresa from '@/components/Selects/SelectEmpresa';
 import DuplicataForm from '@/components/Modals/Financeiro/DuplicataForm';
 import _ from 'lodash';
 import DuplicataMassaForm from '@/components/Modals/Financeiro/DuplicataMassaForm';
+import { fGetOnlyNumber } from '@/utils/functions';
 
 
 
@@ -87,25 +88,64 @@ export default function Financeiro() {
             });
     }
 
-    async function geraBoleto(duplicataId){
+    async function geraBoleto(duplicataId) {
         setLoading(true);
         await api.post(`/Boleto/CreateBoleto?duplicataId=${duplicataId}`)
-        .then(({data}) => {
-            toast.success(`Boleto gerado com sucesso!`);
-            loadData();
-        }).catch((err) => {
-            toast.error(`Ops... parece que houve um erro para gerar o boleto. Confira os dados do cliente!`);
-        })
+            .then(({ data }) => {
+                toast.success(`Boleto gerado com sucesso!`);
+                loadData();
+            }).catch((err) => {
+                toast.error(`Ops... parece que houve um erro para gerar o boleto. Confira os dados do cliente!`);
+            })
         setLoading(false);
+    }
+
+    async function sendEmail(duplicataId) {
+        setLoading(true);
+        await api.post(`/Financeiro/SendEmail?duplicataId=${duplicataId}`)
+            .then(({ data }) => {
+                toast.success(`Email enviado com sucesso!`);
+                loadData();
+            }).catch((err) => {
+                toast.error(`Ops... parece que houve um erro para enviar o seu boleto. Confira os dados do email!`);
+            })
+        setLoading(false);
+
+    }
+    async function sendWhatsapp(duplicataId) {
+
+        var ind = _.findIndex(list, p => p.id == duplicataId);
+        var d = list[ind];
+        var str = `Ola, sua mensalidade da *KRD System* Chegou!\n
+                \nVencimento: ${format(new Date(d.dataVencimento), 'dd/MM/yyyy')}
+                \nValor: R$ ${d.valor.toFixed(2)}
+                \nEmpresa: ${d.empresa.nomeFantasia}
+                \n\nNossa Chave *PIX*!
+                \nCNPJ: 34.073.667/0001-03\n`;
+
+        if (d.codBarras) {
+            str += `\nCodigo de Barras:\n\n${d.codBarras}\n`
+        };
+        if (d.url) {
+            str += `\nPara baixar o PDF do boleto:\n\n${d.url}`
+        };
+        var encodedStr = encodeURIComponent(str);
+        var url = `https://api.whatsapp.com/send?phone=${fGetOnlyNumber(d.empresa.telefone)}&text=${encodedStr}`;
+
+        window.open(url);
+
     }
 
 
     const columns = [
         {
             name: '#',
-            cell: ({ id }: IDuplicata) => <CustomButton onClick={() => { setEdit(id) }} typeButton={'primary'}><FontAwesomeIcon icon={faEdit} /></CustomButton>,
+            cell: ({ id }: IDuplicata) =>
+                <>  <CustomButton size={'sm'} onClick={() => { setEdit(id) }} typeButton={'primary'}><FontAwesomeIcon icon={faEdit} /></CustomButton>
+                    <CustomButton style={{ marginRight: 5, marginLeft: 5 }} size={'sm'} onClick={() => { sendEmail(id) }} typeButton={'primary'}><FontAwesomeIcon icon={faEnvelope} /></CustomButton>
+                    <CustomButton size={'sm'} onClick={() => { sendWhatsapp(id) }} typeButton={'primary'}><FontAwesomeIcon icon={faPhone} /></CustomButton></>,
             sortable: true,
-            width: '5%'
+            width: '20%'
         },
         {
             name: 'Empresa',
@@ -136,29 +176,29 @@ export default function Financeiro() {
         {
             name: 'Boleto',
             selector: (row: IDuplicata) => row.boletoId,
-            cell: (row:IDuplicata) => row.boletoId ? 
-            <>
-             <CustomButton size={'sm'} typeButton={'primary'}
-                           style={{marginRight: 5}}
-                           onClick={() => {
-                              window.open(row.url, 'about-blank')
-                           }}
-             ><FontAwesomeIcon icon={faPrint}/></CustomButton>
-             <CustomButton size={'sm'}  typeButton={'primary'}
-            onClick={() => {
-                navigator.clipboard.writeText(row.codBarras);
-                toast.success(`Codigo copiado!`)
-             }}
-             ><FontAwesomeIcon icon={faBarcode}/></CustomButton>
-            </> : 
-            <>
-            <CustomButton size={'sm'} typeButton={'dark'}
-                           style={{marginRight: 5}}
-                           onClick={() => {
-                             geraBoleto(row.id);
-                           }}
-             ><b>Gerar</b></CustomButton>
-            </>,
+            cell: (row: IDuplicata) => row.boletoId ?
+                <>
+                    <CustomButton size={'sm'} typeButton={'primary'}
+                        style={{ marginRight: 5 }}
+                        onClick={() => {
+                            window.open(row.url, 'about-blank')
+                        }}
+                    ><FontAwesomeIcon icon={faPrint} /></CustomButton>
+                    <CustomButton size={'sm'} typeButton={'primary'}
+                        onClick={() => {
+                            navigator.clipboard.writeText(row.codBarras);
+                            toast.success(`Codigo copiado!`)
+                        }}
+                    ><FontAwesomeIcon icon={faBarcode} /></CustomButton>
+                </> :
+                <>
+                    <CustomButton size={'sm'} typeButton={'dark'}
+                        style={{ marginRight: 5 }}
+                        onClick={() => {
+                            geraBoleto(row.id);
+                        }}
+                    ><b>Gerar</b></CustomButton>
+                </>,
             sortable: true,
             width: '10%'
         },
@@ -197,8 +237,10 @@ export default function Financeiro() {
                     <CustomButton onClick={() => { loadData() }} typeButton={'dark'}>Pesquisar</CustomButton>
                 </div>
             </div>
-            <div style={{margin: '10px 0',
-                         display: 'flex', flexDirection: 'row', flexWrap: 'wrap'}}>
+            <div style={{
+                margin: '10px 0',
+                display: 'flex', flexDirection: 'row', flexWrap: 'wrap'
+            }}>
                 <CustomButton typeButton={'dark'} onClick={(v) => {
                     setMassa(true)
                 }}>Gerar em Massa</CustomButton>
@@ -219,11 +261,11 @@ export default function Financeiro() {
                 setEdit(-1);
             }} />}
             {massa && <DuplicataMassaForm isOpen={massa} setClose={(v) => {
-                if(v){
+                if (v) {
                     loadData();
                 }
                 setMassa(false);
-            }}/>}
+            }} />}
         </div>
 
     )
