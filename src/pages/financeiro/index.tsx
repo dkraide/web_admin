@@ -121,7 +121,7 @@ export default function Financeiro() {
                 \nValor: R$ ${d.valor.toFixed(2)}
                 \nEmpresa: ${d.empresa.nomeFantasia}
                 \n\nNossa Chave *PIX*!
-                \nCNPJ: 34.073.667/0001-03\n`;
+                \nCNPJ: 34.073.667/0001-36\n`;
 
         if (d.codBarras) {
             str += `\nCodigo de Barras:\n\n${d.codBarras}\n`
