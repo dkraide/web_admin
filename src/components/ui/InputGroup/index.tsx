@@ -21,6 +21,7 @@ const InputGroup = ({title, width, minWidth, invalid, error, name,...rest }: inp
     )
 }
 
+
 interface inputForm extends InputHTMLAttributes<HTMLInputElement>{
     title: string
     width?: string

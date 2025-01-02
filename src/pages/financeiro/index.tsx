@@ -18,6 +18,8 @@ import DuplicataForm from '@/components/Modals/Financeiro/DuplicataForm';
 import _ from 'lodash';
 import DuplicataMassaForm from '@/components/Modals/Financeiro/DuplicataMassaForm';
 import { fGetOnlyNumber } from '@/utils/functions';
+import NFSEForm from '@/components/Modals/Financeiro/NFSEForm/DuplicataForm';
+import EnviarEmailForm from '@/components/Modals/Financeiro/EnviarEmailForm';
 
 
 
@@ -26,17 +28,19 @@ type searchProps = {
     dateFim: string
     searchString?: string
     empresa?: number
+    showNFSe?: number
+    massa?: boolean,
+    edit?: number,
+    email?: number
 }
 export default function Financeiro() {
     const [loading, setLoading] = useState(true)
     const [list, setList] = useState<IDuplicata[]>([])
     const [search, setSearch] = useState<searchProps>()
-    const [edit, setEdit] = useState<number>(-1);
-    const [massa, setMassa] = useState(false);
 
     useEffect(() => {
         if (!search) {
-            setSearch({ dateIn: format(startOfMonth(new Date()), 'yyyy-MM-dd'), dateFim: format(endOfMonth(new Date()), 'yyyy-MM-dd') });
+            setSearch({ dateIn: format(startOfMonth(new Date()), 'yyyy-MM-dd'), dateFim: format(endOfMonth(new Date()), 'yyyy-MM-dd'), email: 0, showNFSe: 0, massa: false, edit: -1 });
         }
         setTimeout(() => {
             loadData();
@@ -99,19 +103,6 @@ export default function Financeiro() {
             })
         setLoading(false);
     }
-
-    async function sendEmail(duplicataId) {
-        setLoading(true);
-        await api.post(`/Financeiro/SendEmail?duplicataId=${duplicataId}`)
-            .then(({ data }) => {
-                toast.success(`Email enviado com sucesso!`);
-                loadData();
-            }).catch((err) => {
-                toast.error(`Ops... parece que houve um erro para enviar o seu boleto. Confira os dados do email!`);
-            })
-        setLoading(false);
-
-    }
     async function sendWhatsapp(duplicataId) {
 
         var ind = _.findIndex(list, p => p.id == duplicataId);
@@ -137,21 +128,22 @@ export default function Financeiro() {
     }
 
 
+
     const columns = [
         {
             name: '#',
             cell: ({ id }: IDuplicata) =>
-                <>  <CustomButton size={'sm'} onClick={() => { setEdit(id) }} typeButton={'primary'}><FontAwesomeIcon icon={faEdit} /></CustomButton>
-                    <CustomButton style={{ marginRight: 5, marginLeft: 5 }} size={'sm'} onClick={() => { sendEmail(id) }} typeButton={'primary'}><FontAwesomeIcon icon={faEnvelope} /></CustomButton>
+                <>  <CustomButton size={'sm'} onClick={() => { setSearch({...search, edit: id}) }} typeButton={'primary'}><FontAwesomeIcon icon={faEdit} /></CustomButton>
+                    <CustomButton style={{ marginRight: 5, marginLeft: 5 }} size={'sm'} onClick={() => { setSearch({...search, email: id}) }} typeButton={'primary'}><FontAwesomeIcon icon={faEnvelope} /></CustomButton>
                     <CustomButton size={'sm'} onClick={() => { sendWhatsapp(id) }} typeButton={'primary'}><FontAwesomeIcon icon={faPhone} /></CustomButton></>,
             sortable: true,
-            width: '20%'
+            width: '15%'
         },
         {
             name: 'Empresa',
             selector: (row: IDuplicata) => row.empresa?.nomeFantasia || '',
             sortable: true,
-            width: '30%'
+            width: '35%'
         },
         {
             name: 'Emissao',
@@ -165,13 +157,11 @@ export default function Financeiro() {
             selector: row => row.dataVencimento,
             cell: (row: IDuplicata) => format(new Date(row.dataVencimento), 'dd/MM/yyyy'),
             sortable: true,
-            width: '10%'
         },
         {
             name: 'Valor',
             selector: (row: IDuplicata) => `R$ ${row.valor.toFixed(2)}`,
             sortable: true,
-            width: '10%'
         },
         {
             name: 'Boleto',
@@ -203,11 +193,20 @@ export default function Financeiro() {
             width: '10%'
         },
         {
+            name: 'NFSe',
+            selector: (row: IDuplicata) => row.numeroNFSE,
+            cell: (row: IDuplicata) => !!row.protocolo ? <>
+              <a href={'#'} onClick={() => {setSearch({...search, showNFSe: row.id})}}>{row.numeroNFSE ?? row.statusNFSE}</a>
+            </> : <>
+              <CustomButton  onClick={() => {setSearch({...search, showNFSe: row.id})}}>Gerar</CustomButton>  
+            </>,
+            sortable: true,
+        },
+        {
             name: 'Status',
             selector: (row: IDuplicata) => row.isPago,
             cell: (row: IDuplicata) => getBadge(row.id, row.isPago, row.isCancelado, row.dataVencimento),
             sortable: true,
-            width: '10%'
         },
     ]
 
@@ -242,10 +241,10 @@ export default function Financeiro() {
                 display: 'flex', flexDirection: 'row', flexWrap: 'wrap'
             }}>
                 <CustomButton typeButton={'dark'} onClick={(v) => {
-                    setMassa(true)
+                    setSearch({...search, massa: true})
                 }}>Gerar em Massa</CustomButton>
                 <CustomButton typeButton={'dark'} onClick={(v) => {
-                    setEdit(0)
+                  setSearch({...search, edit: 0})
                 }}>Nova Duplicata</CustomButton>
             </div>
             <InputGroup width={'50%'} placeholder={'Filtro'} title={'Pesquisar'} value={search?.searchString} onChange={(e) => { setSearch({ ...search, searchString: e.target.value }) }} />
@@ -254,17 +253,25 @@ export default function Financeiro() {
                 data={getFiltered()}
                 loading={loading}
             />
-            {edit >= 0 && <DuplicataForm id={edit} isOpen={edit >= 0} setClose={(v) => {
+            {search?.edit >= 0 && <DuplicataForm id={search?.edit} isOpen={search?.edit >= 0} setClose={(v) => {
                 if (v) {
                     loadData();
                 }
-                setEdit(-1);
+                setSearch({...search, edit: -1})
             }} />}
-            {massa && <DuplicataMassaForm isOpen={massa} setClose={(v) => {
+            {search?.massa && <DuplicataMassaForm isOpen={search?.massa} setClose={(v) => {
                 if (v) {
                     loadData();
                 }
-                setMassa(false);
+                setSearch({...search, massa: false})
+            }} />}
+             {search?.showNFSe > 0 && <NFSEForm id={search?.showNFSe} isOpen={search?.showNFSe > 0} setClose={(v) => {
+                loadData();
+                setSearch({...search, showNFSe: 0})
+            }} />}
+             {search?.email > 0 && <EnviarEmailForm id={search?.email} isOpen={search?.email > 0} setClose={(v) => {
+                loadData();
+                setSearch({...search, email: 0})
             }} />}
         </div>
 

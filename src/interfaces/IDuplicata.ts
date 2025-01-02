@@ -21,4 +21,5 @@ export default interface IDuplicata{
  serieNFSE: string
  url?: string
  boletoId?:string
+ statusNFSE?: string
 }
