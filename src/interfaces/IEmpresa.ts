@@ -32,4 +32,5 @@ export default interface IEmpresa{
          isMatriz: boolean
          assessoria: boolean
          usuarioContador: string
+         usuarioSupervisor: string
 }

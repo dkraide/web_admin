@@ -46,6 +46,7 @@ export default function EmpresaForm({user, isOpen, id, setClose, color }: props)
             api.get(`/Empresa/Select?id=${id}`)
                 .then(({ data }: AxiosResponse) => {
                     setObjeto(data);
+                    console.log(data);
                     setLoading(false);
                 })
                 .catch((err) => {
@@ -121,6 +122,7 @@ export default function EmpresaForm({user, isOpen, id, setClose, color }: props)
                 <div className={styles.container}>
                     <InputForm defaultValue={objeto.id} width={'10%'} title={'Cod'}  errors={errors} inputName={"id"} register={register} />
                     <SelectUsuario width={'20%'} selected={objeto.usuarioDono?.toUpperCase()} setSelected={(c) => {setObjeto({...objeto, usuarioDono: c.userName?.toUpperCase()})}}/>
+                    <SelectUsuario title={'Supervisor'} width={'20%'} selected={objeto.usuarioSupervisor?.toUpperCase()} setSelected={(c) => {setObjeto({...objeto, usuarioSupervisor: c.userName?.toUpperCase()})}}/>
                     <SelectStatus width={'20%'} selected={objeto.statusPagamento} title={'Status'} setSelected={(v) => {setObjeto({...objeto, statusPagamento: v})}} />
                     <SelectSimNao width={'20%'} selected={objeto.liberaBackup} title={'Backup'} setSelected={(v) => {setObjeto({...objeto, liberaBackup: v})}}/>
                     <SelectSimNao width={'20%'} selected={objeto.assessoria} title={'Assessoria'} setSelected={(v) => {setObjeto({...objeto, assessoria: v})}}/>
