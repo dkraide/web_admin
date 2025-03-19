@@ -22,4 +22,5 @@ export default interface IDuplicata{
  url?: string
  boletoId?:string
  statusNFSE?: string
+ descricaoNFSE?: string
 }

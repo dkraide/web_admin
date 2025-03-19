@@ -65,7 +65,7 @@ export default function DuplicataForm({isOpen, id, setClose, color }: props) {
         setSending(true);
         objeto.dataVencimento = new Date(data.dataVencimento);
         objeto.valor = fGetNumber(data.valor);
-
+        objeto.descricaoNFSE = data.descricaoNFSE;
         if(id > 0){
             api.put(`Financeiro/Update`, objeto)
             .then(({data}: AxiosResponse) => {
@@ -104,6 +104,7 @@ export default function DuplicataForm({isOpen, id, setClose, color }: props) {
                     <SelectEmpresa selected={objeto.empresaId} setSelected={(v) => {setObjeto({...objeto, empresaId: v})}}/>
                     <InputForm type={'date'} defaultValue={format(new Date(objeto.dataVencimento), 'yyyy-MM-dd')} width={'30%'} title={'Vencimento'}  errors={errors} inputName={"dataVencimento"} register={register} />
                     <InputForm defaultValue={objeto.valor.toFixed(2)} width={'30%'} title={'Valor'}  errors={errors} inputName={"valor"} register={register} />
+                    <InputForm defaultValue={objeto.descricaoNFSE} width={'100%'} title={'Descricao NFSe'}  errors={errors} inputName={"descricaoNFSE"} register={register} />
                     <SelectSimNao width={'30%'} selected={objeto.isPago} title={'Pago'} setSelected={(v) => {setObjeto({...objeto, isPago: v})}} />
                     <div className={styles.button}>
                         <CustomButton onClick={() => { setClose(); } } typeButton={"secondary"}>Cancelar</CustomButton>
