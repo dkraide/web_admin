@@ -127,6 +127,7 @@ export default function SideBar({ ...props }) {
                                 <MenuItem href={'/empresa'} >Empresas</MenuItem>
                                 <MenuItem href={'/empresa/dados'} >Dados</MenuItem>
                                 <MenuItem href={'/backup'} >Arquivos</MenuItem>
+                                <MenuItem href={'/empresa/liberarAcesso'} > Liberar</MenuItem>
                             </SubMenu>
                         </div>
                     </Menu>
