@@ -98,7 +98,13 @@ export default function NFSEForm({ isOpen, id, setClose, color }: props) {
     }
 
     const handleParametrizar = async () => {
-        toast.error('Ainda nao criei isso aqui');
+      setLoading(true);
+        await api.put(`/NFSe/${objeto.id}/Parametrizar`).then(({ data }) => {
+            setObjeto(data);
+        }).catch((err: AxiosError) => {
+            toast.error(`Erro ao Parametrizar NFSe. ${err.response?.data || err.message}`)
+        });
+        setLoading(false);
     }
 
 
