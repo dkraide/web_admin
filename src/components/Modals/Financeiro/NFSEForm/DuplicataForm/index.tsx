@@ -64,17 +64,17 @@ export default function NFSEForm({ isOpen, id, setClose, color }: props) {
             const response = await api.get(`/NFSe/${objeto.id}/Impressao`, {
                 responseType: 'blob', // Importante para receber o PDF como blob
             });
-    
+
             // Cria um URL temporário para o PDF
             const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
             const pdfUrl = window.URL.createObjectURL(pdfBlob);
-    
+
             // Abre o PDF em uma nova aba
             const newWindow = window.open(pdfUrl, '_blank');
             if (!newWindow) {
                 toast.error('Falha ao abrir o PDF. Verifique as permissões do navegador.');
             }
-    
+
             // (Opcional) Pode também forçar o download em vez de abrir no navegador:
             // const link = document.createElement('a');
             // link.href = pdfUrl;
@@ -117,19 +117,20 @@ export default function NFSEForm({ isOpen, id, setClose, color }: props) {
                         <InputGroup width={'15%'} value={objeto.valor.toFixed(2)} title={'Valor'} />
                     </div>
                     <div className={styles.protocolo} hidden={!objeto.protocolo}>
+                        <InputGroup width={'15%'} value={objeto.numeroRPS} title={'RPS'} />
                         <InputGroup width={'20%'} value={objeto.numeroNFSE} title={'Numero'} />
                         <InputGroup width={'20%'} value={objeto.loteNFSE} title={'Lote'} />
                         <InputGroup width={'20%'} value={objeto.chaveNFSE} title={'Chave'} />
                         <InputGroup width={'20%'} value={objeto.statusNFSE} title={'Status'} />
-                        <div className={styles.protocolo} style={{justifyContent: 'flex-end'}}>
+                        <div className={styles.protocolo} style={{ justifyContent: 'flex-end' }}>
                             <CustomButton onClick={handleAtualizar}>Atualizar</CustomButton>
                             <CustomButton onClick={handleImprimir}>Imprimir</CustomButton>
-                            <CustomButton  hidden={objeto.statusNFSE?.toUpperCase() === 'CANCELADA'} onClick={handleCancelar}>Cancelar</CustomButton>
+                            <CustomButton hidden={objeto.statusNFSE?.toUpperCase() === 'CANCELADA'} onClick={handleCancelar}>Cancelar</CustomButton>
                             <CustomButton onClick={handleParametrizar}>Parametrizar</CustomButton>
                         </div>
                     </div>
                     <div className={styles.protocolo} hidden={!!objeto.protocolo}>
-                        <CustomButton style={{height: 40}} onClick={handleCriar}>Gerar NFS-e</CustomButton>
+                        <CustomButton style={{ height: 40 }} onClick={handleCriar}>Gerar NFS-e</CustomButton>
                     </div>
                 </div>
             )}
