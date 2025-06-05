@@ -196,7 +196,7 @@ export default function Financeiro() {
             name: 'NFSe',
             selector: (row: IDuplicata) => row.numeroNFSE,
             cell: (row: IDuplicata) => !!row.protocolo ? <>
-              <a href={'#'} onClick={() => {setSearch({...search, showNFSe: row.id})}}>{row.numeroNFSE ?? row.statusNFSE}</a>
+              <a href={'#'} onClick={() => {setSearch({...search, showNFSe: row.id})}}>{row.numeroNFSE?.length > 0 ? row.numeroNFSE : row.statusNFSE}</a>
             </> : <>
               <CustomButton  onClick={() => {setSearch({...search, showNFSe: row.id})}}>Gerar</CustomButton>  
             </>,
