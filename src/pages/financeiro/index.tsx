@@ -132,6 +132,7 @@ export default function Financeiro() {
     const columns = [
         {
             name: '#',
+            selector: row => row.id,
             cell: ({ id }: IDuplicata) =>
                 <>  <CustomButton size={'sm'} onClick={() => { setSearch({...search, edit: id}) }} typeButton={'primary'}><FontAwesomeIcon icon={faEdit} /></CustomButton>
                     <CustomButton style={{ marginRight: 5, marginLeft: 5 }} size={'sm'} onClick={() => { setSearch({...search, email: id}) }} typeButton={'primary'}><FontAwesomeIcon icon={faEnvelope} /></CustomButton>

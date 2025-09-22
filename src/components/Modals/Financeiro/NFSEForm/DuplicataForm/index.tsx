@@ -9,6 +9,7 @@ import IDuplicata from "@/interfaces/IDuplicata";
 import BaseModal from "@/components/Modals/Base/Index";
 import CustomButton from "@/components/ui/Buttons";
 import { format } from "date-fns";
+import { fGetOnlyNumber } from "@/utils/functions";
 
 
 interface props {
@@ -117,7 +118,7 @@ export default function NFSEForm({ isOpen, id, setClose, color }: props) {
                 <div className={styles.container}>
                     <div className={styles.protocolo}>
                         <InputGroup width={'10%'} value={objeto.id} title={'Duplicata'} />
-                        <InputGroup width={'50%'} value={objeto.empresa?.nomeFantasia} title={'Cliente'} />
+                        <InputGroup width={'50%'} value={`${fGetOnlyNumber(objeto.empresa?.cnpj ?? '')} ${objeto.empresa?.nomeFantasia}`} title={'Cliente'} />
                         <InputGroup width={'10%'} value={format(new Date(objeto.dataEmissao), 'dd/MM/yy')} title={'Emissao'} />
                         <InputGroup width={'15%'} value={format(new Date(objeto.dataVencimento), 'dd/MM/yy')} title={'Vencimento'} />
                         <InputGroup width={'15%'} value={objeto.valor.toFixed(2)} title={'Valor'} />
