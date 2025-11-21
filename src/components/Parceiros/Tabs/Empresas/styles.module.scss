@@ -1,0 +1,16 @@
+.container{
+    width: 100%;
+    height: 100%;
+}
+.status, .actions{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0px 15px;
+}
+.actions{
+    button{
+        height: 35px;
+        justify-content: center;
+    }
+}

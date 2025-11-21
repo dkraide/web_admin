@@ -18,7 +18,7 @@
     width: 100%;
     margin-right: auto;
     margin-left: auto;
-    padding-top: 70px;
+    padding-top: 60px;
 }
 .page-body-wrapper{
     min-height: calc(100vh - 70px);
@@ -46,11 +46,10 @@
 .main-panel{
     transition: width .25s ease,margin .25s ease;
     width:100%;
-    min-height: calc(100vh - 70px);
+    min-height: calc(100vh - 60px);
     display: flex;
     flex-direction: column;
     background-color: var(--background);
-    padding: 10px;
     overflow-x: hidden;
 }
 @media print{

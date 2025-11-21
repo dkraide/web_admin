@@ -7,4 +7,5 @@ export default interface IUsuario{
     cpf?: string
     email?: string
     telefone?: string
+    usuarioSupervisor?: string
 }

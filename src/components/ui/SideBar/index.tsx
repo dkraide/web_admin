@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styles from './styles.module.scss';
 import { useContext, useEffect, useState } from 'react';
-import { faUser, faArrowLeft, faBars, faRightFromBracket, faArrowRight, faPowerOff } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faArrowLeft, faBars, faRightFromBracket, faArrowRight, faPowerOff, faPerson } from '@fortawesome/free-solid-svg-icons';
 import { AuthContext } from '@/contexts/AuthContext';
 import IUsuario from '@/interfaces/IUsuario';
 import SelectEmpresa from '@/components/Selects/SelectEmpresa';
@@ -81,11 +81,6 @@ export default function SideBar({ ...props }) {
                 <div style={{ marginRight: 'auto' }}>
                     <a className={styles["menu-btn"]} onClick={() => { setCollapsed(!collapsed); setToggled(!toggled) }}><FontAwesomeIcon color={'var(--main)'} icon={faBars} /></a>
                 </div>
-                <div style={{ marginRight: 'auto', padding: '5px' }}>
-                    <SelectEmpresa width={'250px'} selected={user.empresaSelecionada} setSelected={(v) => {
-                        updateEmpresa(v);
-                    }} />
-                </div>
                 <div hidden={innerWidth <= 700} style={{ justifyContent: 'flex-end', marginRight: '10px', display: 'flex', flexDirection: 'row' }}>
                     <span style={{ marginRight: '10px' }}>Bem Vindo, <br /><b>{user.nome}</b></span>
                     <a className={styles["menu-btn"]} onClick={signOut}><FontAwesomeIcon icon={faPowerOff} color={'var(--main)'} /></a>
@@ -117,17 +112,19 @@ export default function SideBar({ ...props }) {
                             <a className={styles["menu-btn"]} onClick={signOut}><FontAwesomeIcon icon={faPowerOff} color={'var(--main)'} /></a>
                         </div>
                         <div style={{ flex: '1' }}>
-                            <SubMenu rootStyles={subMenuStyle} icon={<FontAwesomeIcon icon={faUser} color={'var(--main)'} />} {...props} label="Usuarios">
+                            <SubMenu hidden={user?.userName?.toUpperCase() != 'DKRAIDE'} rootStyles={subMenuStyle} icon={<FontAwesomeIcon icon={faUser} color={'var(--main)'} />} {...props} label="Usuarios">
                                 <MenuItem href={'/usuario'} >Usuarios</MenuItem>
                             </SubMenu>
-                            <SubMenu rootStyles={subMenuStyle} icon={<FontAwesomeIcon icon={faUser} color={'var(--main)'} />} label="Financeiro">
+                            <SubMenu hidden={user?.userName?.toUpperCase() != 'DKRAIDE'}  rootStyles={subMenuStyle} icon={<FontAwesomeIcon icon={faUser} color={'var(--main)'} />} label="Financeiro">
                                 <MenuItem href={'/financeiro'} > Duplicatas</MenuItem>
                             </SubMenu>
-                            <SubMenu rootStyles={subMenuStyle} icon={<FontAwesomeIcon icon={faUser} color={'var(--main)'} />} label="Empresas">
+                            <SubMenu hidden={user?.userName?.toUpperCase() != 'DKRAIDE'}  rootStyles={subMenuStyle} icon={<FontAwesomeIcon icon={faUser} color={'var(--main)'} />} label="Empresas">
                                 <MenuItem href={'/empresa'} >Empresas</MenuItem>
                                 <MenuItem href={'/empresa/dados'} >Dados</MenuItem>
                                 <MenuItem href={'/backup'} >Arquivos</MenuItem>
                                 <MenuItem href={'/empresa/liberarAcesso'} > Liberar</MenuItem>
+                            </SubMenu>
+                             <SubMenu href={'/parceiros'}  rootStyles={subMenuStyle} icon={<FontAwesomeIcon icon={faPerson} color={'var(--main)'} />} label="Parceiros">
                             </SubMenu>
                         </div>
                     </Menu>

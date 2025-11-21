@@ -3,19 +3,15 @@ import styles from './styles.module.scss';
 import { api } from '@/services/apiClient';
 import { AuthContext } from '@/contexts/AuthContext';
 import { AxiosError, AxiosResponse } from 'axios';
-import IClasseMaterial from '@/interfaces/IClasseMaterial';
 import { InputGroup } from '@/components/ui/InputGroup';
 import CustomTable from '@/components/ui/CustomTable';
 import { toast } from 'react-toastify';
 import CustomButton from '@/components/ui/Buttons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit } from '@fortawesome/free-solid-svg-icons';
-import ClasseForm from '@/components/Modals/ClasseMaterial/CreateEditForm';
 import IUsuario from '@/interfaces/IUsuario';
 import IEmpresa from '@/interfaces/IEmpresa';
 import EmpresaForm from '@/components/Modals/Empresa/EmpresaForm';
 import { fGetOnlyNumber } from '@/utils/functions';
-
+import { canSSRAdmin } from '@/utils/CanSSRAdmin';
 
 export default function Empresa() {
     const [loading, setLoading] = useState(true)
@@ -151,5 +147,9 @@ export default function Empresa() {
         </div>
     )
 }
-
+export const getServerSideProps = canSSRAdmin(async (ctx) =>{
+  return{
+    props: {}
+  }
+} )
 
