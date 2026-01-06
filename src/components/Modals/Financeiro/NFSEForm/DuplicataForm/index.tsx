@@ -99,7 +99,7 @@ export default function NFSEForm({ isOpen, id, setClose, color }: props) {
     }
 
     const handleParametrizar = async () => {
-      setLoading(true);
+        setLoading(true);
         await api.put(`/NFSe/${objeto.id}/Parametrizar`).then(({ data }) => {
             setObjeto(data);
         }).catch((err: AxiosError) => {
@@ -107,8 +107,6 @@ export default function NFSEForm({ isOpen, id, setClose, color }: props) {
         });
         setLoading(false);
     }
-
-
 
     return (
         <BaseModal color={color} title={'Cadastro de NFS-e'} isOpen={isOpen} setClose={setClose}>
@@ -128,7 +126,7 @@ export default function NFSEForm({ isOpen, id, setClose, color }: props) {
                         <InputGroup width={'20%'} value={objeto.numeroNFSE} title={'Numero'} />
                         <InputGroup width={'20%'} value={objeto.loteNFSE} title={'Lote'} />
                         <InputGroup width={'20%'} value={objeto.chaveNFSE} title={'Chave'} />
-                        <InputGroup width={'20%'} value={objeto.statusNFSE} title={'Status'} />
+                        <InputGroup width={'100%'} value={objeto.statusNFSE} title={'Status'} />
                         <div className={styles.protocolo} style={{ justifyContent: 'flex-end' }}>
                             <CustomButton onClick={handleAtualizar}>Atualizar</CustomButton>
                             <CustomButton onClick={handleImprimir}>Imprimir</CustomButton>
