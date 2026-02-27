@@ -8,4 +8,5 @@ export default interface IUsuario{
     email?: string
     telefone?: string
     usuarioSupervisor?: string
+    isAdmin?: boolean
 }

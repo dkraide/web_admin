@@ -12,9 +12,10 @@ interface selProps{
     selected: number;
     setSelected: (value: any) => void;
     width?: string;
+    includeGeral?: boolean
 }
 
-export  default function SelectEmpresa({width, selected, setSelected}: selProps){
+export  default function SelectEmpresa({width, selected, setSelected, includeGeral}: selProps){
     const [formas, setFormas] = useState<IEmpresa[]>([]);
     const loadFormas = async () => {
            api.get(`/Empresa/List`)
@@ -37,10 +38,17 @@ export  default function SelectEmpresa({width, selected, setSelected}: selProps)
             }
             data.push(x);
         });
+        if(includeGeral){
+            data.unshift({value: '0', label: 'GERAL'})
+        }
         return data;
     }
 
     function onSelect(value: any) {
+        if(includeGeral && value == '0'){
+            setSelected(0);
+            return;
+        }
         var index = _.findIndex(formas, p => p.id == value);
         if (index >= 0) {
             setSelected(formas[index].id);

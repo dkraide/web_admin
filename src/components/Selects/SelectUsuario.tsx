@@ -13,9 +13,11 @@ interface selProps{
     width?: string
     title?: string
     onlyContador?: boolean
+    onlySupervisor?: boolean
+    includeGeral?: boolean
 }
 
-export  default function SelectUsuario({title, onlyContador, width, selected, setSelected}: selProps){
+export  default function SelectUsuario({title, onlyContador, width, selected, setSelected, includeGeral, onlySupervisor}: selProps){
     const [formas, setFormas] = useState<IUsuario[]>([]);
     const loadFormas = async () => {
            api.get(`/User/List`)
@@ -32,7 +34,7 @@ export  default function SelectUsuario({title, onlyContador, width, selected, se
     function getData() {
         var data = [] as any[];
         formas.map((forma) => {
-            if(!onlyContador || (onlyContador && forma.isContador)){
+            if((!onlyContador || (onlyContador && forma.isContador)) && (!onlySupervisor || (onlySupervisor && forma.isAdmin))){
                 var x = {
                     value: forma.userName?.toUpperCase(),
                     label: forma.userName?.toUpperCase() || ''
@@ -40,10 +42,17 @@ export  default function SelectUsuario({title, onlyContador, width, selected, se
                 data.push(x);
             }
         });
+        if(includeGeral){
+            data.unshift({value: 'GERAL', label: 'GERAL'})
+        }
         return data;
     }
 
     function onSelect(value: any) {
+        if(includeGeral && value == 'GERAL'){
+            setSelected('GERAL');
+            return;
+        }
         var index = _.findIndex(formas, p => p.userName?.toUpperCase() == value);
         if (index >= 0) {
             setSelected(formas[index]);

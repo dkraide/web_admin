@@ -21,6 +21,7 @@ import { fGetOnlyNumber } from '@/utils/functions';
 import NFSEForm from '@/components/Modals/Financeiro/NFSEForm/DuplicataForm';
 import EnviarEmailForm from '@/components/Modals/Financeiro/EnviarEmailForm';
 import { canSSRAdmin } from '@/utils/CanSSRAdmin';
+import SelectUsuario from '@/components/Selects/SelectUsuario';
 
 
 
@@ -32,7 +33,8 @@ type searchProps = {
     showNFSe?: number
     massa?: boolean,
     edit?: number,
-    email?: number
+    email?: number,
+    userName?: string
 }
 export default function Financeiro() {
     const [loading, setLoading] = useState(true)
@@ -72,6 +74,8 @@ export default function Financeiro() {
 
     function getFiltered() {
         var res = list.filter(p => {
+            if(search.empresa && search.empresa > 0 && p.empresaId != search.empresa) return false;
+            if(search.userName && search.userName != 'GERAL' && search.userName.length > 0 && p.empresa?.usuarioSupervisor?.toUpperCase() != search.userName.toUpperCase()) return false;
             return (p.empresaId + (p.empresa?.nomeFantasia || '')).toLowerCase().includes((search?.searchString || '').toLowerCase())
         });
         return res;
@@ -135,8 +139,8 @@ export default function Financeiro() {
             name: '#',
             selector: row => row.id,
             cell: ({ id }: IDuplicata) =>
-                <>  <CustomButton size={'sm'} onClick={() => { setSearch({...search, edit: id}) }} typeButton={'primary'}><FontAwesomeIcon icon={faEdit} /></CustomButton>
-                    <CustomButton style={{ marginRight: 5, marginLeft: 5 }} size={'sm'} onClick={() => { setSearch({...search, email: id}) }} typeButton={'primary'}><FontAwesomeIcon icon={faEnvelope} /></CustomButton>
+                <>  <CustomButton size={'sm'} onClick={() => { setSearch({ ...search, edit: id }) }} typeButton={'primary'}><FontAwesomeIcon icon={faEdit} /></CustomButton>
+                    <CustomButton style={{ marginRight: 5, marginLeft: 5 }} size={'sm'} onClick={() => { setSearch({ ...search, email: id }) }} typeButton={'primary'}><FontAwesomeIcon icon={faEnvelope} /></CustomButton>
                     <CustomButton size={'sm'} onClick={() => { sendWhatsapp(id) }} typeButton={'primary'}><FontAwesomeIcon icon={faPhone} /></CustomButton></>,
             sortable: true,
             width: '15%'
@@ -198,9 +202,9 @@ export default function Financeiro() {
             name: 'NFSe',
             selector: (row: IDuplicata) => row.numeroNFSE,
             cell: (row: IDuplicata) => !!row.protocolo ? <>
-              <a href={'#'} onClick={() => {setSearch({...search, showNFSe: row.id})}}>{row.numeroNFSE?.length > 0 ? row.numeroNFSE : row.statusNFSE}</a>
+                <a href={'#'} onClick={() => { setSearch({ ...search, showNFSe: row.id }) }}>{row.numeroNFSE?.length > 0 ? row.numeroNFSE : row.statusNFSE}</a>
             </> : <>
-              <CustomButton  onClick={() => {setSearch({...search, showNFSe: row.id})}}>Gerar</CustomButton>  
+                <CustomButton onClick={() => { setSearch({ ...search, showNFSe: row.id }) }}>Gerar</CustomButton>
             </>,
             sortable: true,
         },
@@ -233,7 +237,8 @@ export default function Financeiro() {
             <div className={styles.box}>
                 <InputGroup minWidth={'275px'} type={'date'} value={search?.dateIn} onChange={(v) => { setSearch({ ...search, dateIn: v.target.value }) }} title={'Inicio'} width={'20%'} />
                 <InputGroup minWidth={'275px'} type={'date'} value={search?.dateFim} onChange={(v) => { setSearch({ ...search, dateFim: v.target.value }) }} title={'Final'} width={'20%'} />
-                <SelectEmpresa width={'30%'} selected={search?.empresa} setSelected={(v) => { setSearch({ ...search, empresa: v }) }} />
+                <SelectEmpresa includeGeral width={'30%'} selected={search?.empresa} setSelected={(v) => { setSearch({ ...search, empresa: v }) }} />
+                <SelectUsuario includeGeral onlySupervisor title={'Supervisor'} width={'300px'} selected={search?.userName} setSelected={(u) => setSearch({ ...search, userName: u.userName })} />
                 <div style={{ width: '100%' }}>
                     <CustomButton onClick={() => { loadData() }} typeButton={'dark'}>Pesquisar</CustomButton>
                 </div>
@@ -243,10 +248,10 @@ export default function Financeiro() {
                 display: 'flex', flexDirection: 'row', flexWrap: 'wrap'
             }}>
                 <CustomButton typeButton={'dark'} onClick={(v) => {
-                    setSearch({...search, massa: true})
+                    setSearch({ ...search, massa: true })
                 }}>Gerar em Massa</CustomButton>
                 <CustomButton typeButton={'dark'} onClick={(v) => {
-                  setSearch({...search, edit: 0})
+                    setSearch({ ...search, edit: 0 })
                 }}>Nova Duplicata</CustomButton>
             </div>
             <InputGroup width={'50%'} placeholder={'Filtro'} title={'Pesquisar'} value={search?.searchString} onChange={(e) => { setSearch({ ...search, searchString: e.target.value }) }} />
@@ -259,29 +264,29 @@ export default function Financeiro() {
                 if (v) {
                     loadData();
                 }
-                setSearch({...search, edit: -1})
+                setSearch({ ...search, edit: -1 })
             }} />}
             {search?.massa && <DuplicataMassaForm isOpen={search?.massa} setClose={(v) => {
                 if (v) {
                     loadData();
                 }
-                setSearch({...search, massa: false})
+                setSearch({ ...search, massa: false })
             }} />}
-             {search?.showNFSe > 0 && <NFSEForm id={search?.showNFSe} isOpen={search?.showNFSe > 0} setClose={(v) => {
+            {search?.showNFSe > 0 && <NFSEForm id={search?.showNFSe} isOpen={search?.showNFSe > 0} setClose={(v) => {
                 loadData();
-                setSearch({...search, showNFSe: 0})
+                setSearch({ ...search, showNFSe: 0 })
             }} />}
-             {search?.email > 0 && <EnviarEmailForm id={search?.email} isOpen={search?.email > 0} setClose={(v) => {
+            {search?.email > 0 && <EnviarEmailForm id={search?.email} isOpen={search?.email > 0} setClose={(v) => {
                 loadData();
-                setSearch({...search, email: 0})
+                setSearch({ ...search, email: 0 })
             }} />}
         </div>
 
     )
 }
-export const getServerSideProps = canSSRAdmin(async (ctx) =>{
-  return{
-    props: {}
-  }
-} )
+export const getServerSideProps = canSSRAdmin(async (ctx) => {
+    return {
+        props: {}
+    }
+})
 
