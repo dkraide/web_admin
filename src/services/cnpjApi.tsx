@@ -52,7 +52,8 @@ export async function buscarEmpresaPorCnpj(cnpj: string): Promise<IEmpresa | nul
             isMatriz: data.estabelecimento?.matriz,
             assessoria: false,
             usuarioContador: "",
-            usuarioSupervisor: ""
+            usuarioSupervisor: "",
+            valorKrd: 0
         };
 
         return empresa;
