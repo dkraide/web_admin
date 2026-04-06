@@ -115,16 +115,17 @@ export default function SideBar({ ...props }) {
                             <SubMenu hidden={user?.userName?.toUpperCase() != 'DKRAIDE'} rootStyles={subMenuStyle} icon={<FontAwesomeIcon icon={faUser} color={'var(--main)'} />} {...props} label="Usuarios">
                                 <MenuItem href={'/usuario'} >Usuarios</MenuItem>
                             </SubMenu>
-                            <SubMenu hidden={user?.userName?.toUpperCase() != 'DKRAIDE'}  rootStyles={subMenuStyle} icon={<FontAwesomeIcon icon={faUser} color={'var(--main)'} />} label="Financeiro">
+                            <SubMenu hidden={user?.userName?.toUpperCase() != 'DKRAIDE'} rootStyles={subMenuStyle} icon={<FontAwesomeIcon icon={faUser} color={'var(--main)'} />} label="Financeiro">
                                 <MenuItem href={'/financeiro'} > Duplicatas</MenuItem>
+                                <MenuItem href={'/relatorios/notas'} > Notas</MenuItem>
                             </SubMenu>
-                            <SubMenu hidden={user?.userName?.toUpperCase() != 'DKRAIDE'}  rootStyles={subMenuStyle} icon={<FontAwesomeIcon icon={faUser} color={'var(--main)'} />} label="Empresas">
+                            <SubMenu hidden={user?.userName?.toUpperCase() != 'DKRAIDE'} rootStyles={subMenuStyle} icon={<FontAwesomeIcon icon={faUser} color={'var(--main)'} />} label="Empresas">
                                 <MenuItem href={'/empresa'} >Empresas</MenuItem>
                                 <MenuItem href={'/empresa/dados'} >Dados</MenuItem>
                                 <MenuItem href={'/backup'} >Arquivos</MenuItem>
                                 <MenuItem href={'/empresa/liberarAcesso'} > Liberar</MenuItem>
                             </SubMenu>
-                             <SubMenu href={'/parceiros'}  rootStyles={subMenuStyle} icon={<FontAwesomeIcon icon={faPerson} color={'var(--main)'} />} label="Parceiros">
+                            <SubMenu href={'/parceiros'} rootStyles={subMenuStyle} icon={<FontAwesomeIcon icon={faPerson} color={'var(--main)'} />} label="Parceiros">
                             </SubMenu>
                         </div>
                     </Menu>
