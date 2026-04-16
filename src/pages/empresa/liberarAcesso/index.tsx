@@ -6,7 +6,7 @@ import CustomButton from "@/components/ui/Buttons";
 import { api } from "@/services/apiClient";
 import { toast } from "react-toastify";
 import SelectSimNao from "@/components/Selects/SelectSimNao";
-import { canSSRAdmin } from "@/utils/CanSSRAdmin";
+import { canSSRAuth } from "@/utils/CanSSRAuth";
 
 
 
@@ -74,9 +74,4 @@ export default function LiberarAcesso() {
         </div>
     )
 }
-export const getServerSideProps = canSSRAdmin(async (ctx) =>{
-  return{
-    props: {}
-  }
-} )
-
+export const getServerSideProps = canSSRAuth(['SUPORTE', 'ADMINISTRADOR']);

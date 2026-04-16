@@ -31,7 +31,7 @@ export default function SideBar({ ...props }) {
     useEffect(() => {
         test();
     }, []);
-    const { getUser, signOut, updateUser } = useContext(AuthContext);
+    const { getUser, signOut, updateUser, isInRole } = useContext(AuthContext);
     function forceClose() {
         var menu = document.getElementById("sideBar_krd");
         menu?.classList.remove(styles.activeMenu);
@@ -112,20 +112,19 @@ export default function SideBar({ ...props }) {
                             <a className={styles["menu-btn"]} onClick={signOut}><FontAwesomeIcon icon={faPowerOff} color={'var(--main)'} /></a>
                         </div>
                         <div style={{ flex: '1' }}>
-                            <SubMenu hidden={user?.userName?.toUpperCase() != 'DKRAIDE'} rootStyles={subMenuStyle} icon={<FontAwesomeIcon icon={faUser} color={'var(--main)'} />} {...props} label="Usuarios">
+                            <SubMenu hidden={!isInRole(['ADMINISTRADOR', 'SUPORTE'])} rootStyles={subMenuStyle} icon={<FontAwesomeIcon icon={faUser} color={'var(--main)'} />} {...props} label="Usuarios">
                                 <MenuItem href={'/usuario'} >Usuarios</MenuItem>
                             </SubMenu>
-                            <SubMenu hidden={user?.userName?.toUpperCase() != 'DKRAIDE'} rootStyles={subMenuStyle} icon={<FontAwesomeIcon icon={faUser} color={'var(--main)'} />} label="Financeiro">
+                            <SubMenu hidden={!isInRole(['ADMINISTRADOR'])} rootStyles={subMenuStyle} icon={<FontAwesomeIcon icon={faUser} color={'var(--main)'} />} label="Financeiro">
                                 <MenuItem href={'/financeiro'} > Duplicatas</MenuItem>
                                 <MenuItem href={'/relatorios/notas'} > Notas</MenuItem>
                             </SubMenu>
-                            <SubMenu hidden={user?.userName?.toUpperCase() != 'DKRAIDE'} rootStyles={subMenuStyle} icon={<FontAwesomeIcon icon={faUser} color={'var(--main)'} />} label="Empresas">
+                            <SubMenu hidden={!isInRole(['ADMINISTRADOR', 'SUPORTE'])} rootStyles={subMenuStyle} icon={<FontAwesomeIcon icon={faUser} color={'var(--main)'} />} label="Empresas">
                                 <MenuItem href={'/empresa'} >Empresas</MenuItem>
                                 <MenuItem href={'/empresa/dados'} >Dados</MenuItem>
-                                <MenuItem href={'/backup'} >Arquivos</MenuItem>
                                 <MenuItem href={'/empresa/liberarAcesso'} > Liberar</MenuItem>
                             </SubMenu>
-                            <SubMenu href={'/parceiros'} rootStyles={subMenuStyle} icon={<FontAwesomeIcon icon={faPerson} color={'var(--main)'} />} label="Parceiros">
+                            <SubMenu hidden={!isInRole(['SUPERVISOR', 'ADMINISTRADOR'])} href={'/parceiros'} rootStyles={subMenuStyle} icon={<FontAwesomeIcon icon={faPerson} color={'var(--main)'} />} label="Parceiros">
                             </SubMenu>
                         </div>
                     </Menu>

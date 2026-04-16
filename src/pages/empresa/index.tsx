@@ -11,9 +11,9 @@ import IUsuario from '@/interfaces/IUsuario';
 import IEmpresa from '@/interfaces/IEmpresa';
 import EmpresaForm from '@/components/Modals/Empresa/EmpresaForm';
 import { fGetOnlyNumber } from '@/utils/functions';
-import { canSSRAdmin } from '@/utils/CanSSRAdmin';
 import SelectStatus from '@/components/Selects/SelectStatus';
 import SelectUsuario from '@/components/Selects/SelectUsuario';
+import { canSSRAuth } from '@/utils/CanSSRAuth';
 
 type searchProps = {
     str: string;
@@ -24,7 +24,7 @@ type searchProps = {
 export default function Empresa() {
     const [loading, setLoading] = useState(true)
     const [classes, setClasses] = useState<IEmpresa[]>([])
-    const { getUser } = useContext(AuthContext)
+    const { getUser, isInRole } = useContext(AuthContext)
     const [search, setSearch] = useState<searchProps>({ str: '', status: true, userId: undefined });
     const [edit, setEdit] = useState(-1);
     const [user, setUser] = useState<IUsuario>()
@@ -78,11 +78,19 @@ export default function Empresa() {
             })
     }
 
+    const handleClickEdit = (id) => {
+        if(!isInRole(['ADMINISTRADOR'])){
+            toast.error('Apenas administradores podem editar/criar empresas.');
+            return;
+        }
+        setEdit(id);
+    }
+
     const columns = [
         {
             name: 'Id',
             selector: row => row['id'],
-            cell: ({ id }) => <CustomButton onClick={() => { setEdit(id) }} typeButton={'warning'}>{id}</CustomButton>,
+            cell: ({ id }) => <CustomButton onClick={() => { handleClickEdit(id) }} typeButton={'warning'}>{id}</CustomButton>,
             sortable: true,
             width: '100px'
         },
@@ -138,7 +146,7 @@ export default function Empresa() {
                 <SelectStatus width={'200px'} setSelected={(e) => { setSearch({ ...search, status: e}) }} selected={search.status} />
                 <SelectUsuario includeGeral onlySupervisor title={'Supervisor'} width={'300px'} selected={search.userId} setSelected={(u) => setSearch({...search, userId: u.userName})} />
             </div>
-            <CustomButton typeButton={'dark'} onClick={() => { setEdit(0) }} >Nova Empresa</CustomButton>
+            <CustomButton typeButton={'dark'} onClick={() => { handleClickEdit(0) }} >Nova Empresa</CustomButton>
             <hr />
             <CustomTable
                 columns={columns}
@@ -156,9 +164,5 @@ export default function Empresa() {
         </div>
     )
 }
-export const getServerSideProps = canSSRAdmin(async (ctx) => {
-    return {
-        props: {}
-    }
-})
+export const getServerSideProps = canSSRAuth(['SUPORTE', 'ADMINISTRADOR']);
 

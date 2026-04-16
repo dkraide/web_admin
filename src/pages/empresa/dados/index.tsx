@@ -7,7 +7,7 @@ import { toast } from 'react-toastify'
 import CustomButton from '@/components/ui/Buttons'
 import Loading from '@/components/Loading'
 import Confirm from '@/components/Modals/Confirm'
-import { canSSRAdmin } from '@/utils/CanSSRAdmin'
+import { canSSRAuth } from '@/utils/CanSSRAuth'
 
 
 type data = {
@@ -171,9 +171,4 @@ const Box = ({ field, value, setAction }) => {
         </div>
     )
 }
-export const getServerSideProps = canSSRAdmin(async (ctx) =>{
-  return{
-    props: {}
-  }
-} )
-
+export const getServerSideProps = canSSRAuth(['SUPORTE', 'ADMINISTRADOR']);

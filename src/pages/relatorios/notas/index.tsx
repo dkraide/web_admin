@@ -1,4 +1,3 @@
-import { canSSRAdmin } from '@/utils/CanSSRAdmin';
 import styles from './styles.module.scss';
 import { useEffect, useState } from 'react';
 import { endOfMonth, format, startOfMonth } from 'date-fns';
@@ -6,6 +5,7 @@ import { api } from '@/services/apiClient';
 import IDuplicata from '@/interfaces/IDuplicata';
 import { exportNotasToExcel } from '@/utils/exportNotasExcel';
 import { printNotasFiscais } from '@/utils/printNotas';
+import { canSSRAuth } from '@/utils/CanSSRAuth';
 
 type Search = {
   dataIn: string;
@@ -232,6 +232,4 @@ export default function Notas() {
   );
 }
 
-export const getServerSideProps = canSSRAdmin(async () => {
-  return { props: {} };
-});
+export const getServerSideProps = canSSRAuth(['ADMINISTRADOR']);

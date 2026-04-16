@@ -15,7 +15,7 @@ import IUsuario from '@/interfaces/IUsuario';
 import IEmpresa from '@/interfaces/IEmpresa';
 import EmpresaForm from '@/components/Modals/Empresa/EmpresaForm';
 import UsuarioForm from '@/components/Modals/Usuario';
-import { canSSRAdmin } from '@/utils/CanSSRAdmin';
+import { canSSRAuth } from '@/utils/CanSSRAuth';
 
 
 export default function Empresa() {
@@ -100,10 +100,6 @@ export default function Empresa() {
         </div>
     )
 }
-export const getServerSideProps = canSSRAdmin(async (ctx) =>{
-  return{
-    props: {}
-  }
-} )
+export const getServerSideProps = canSSRAuth(['ADMINISTRADOR', 'SUPORTE']);
 
 

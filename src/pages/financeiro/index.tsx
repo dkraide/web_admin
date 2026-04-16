@@ -20,8 +20,8 @@ import DuplicataMassaForm from '@/components/Modals/Financeiro/DuplicataMassaFor
 import { fGetOnlyNumber } from '@/utils/functions';
 import NFSEForm from '@/components/Modals/Financeiro/NFSEForm/DuplicataForm';
 import EnviarEmailForm from '@/components/Modals/Financeiro/EnviarEmailForm';
-import { canSSRAdmin } from '@/utils/CanSSRAdmin';
 import SelectUsuario from '@/components/Selects/SelectUsuario';
+import { canSSRAuth } from '@/utils/CanSSRAuth';
 
 
 
@@ -284,9 +284,4 @@ export default function Financeiro() {
 
     )
 }
-export const getServerSideProps = canSSRAdmin(async (ctx) => {
-    return {
-        props: {}
-    }
-})
-
+export const getServerSideProps = canSSRAuth(['ADMINISTRADOR']);

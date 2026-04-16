@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { api } from "@/services/apiClient";
 import { toast } from "react-toastify";
 import { AxiosError, AxiosResponse } from "axios";
-import IClasseMaterial from "@/interfaces/IClasseMaterial";
 import { SelectBase } from "./SelectBase";
 import _ from "lodash";
 import IUsuario from "@/interfaces/IUsuario";
+import { AuthContext } from "@/contexts/AuthContext";
 
 interface selProps{
     selected: string
@@ -19,6 +19,7 @@ interface selProps{
 
 export  default function SelectUsuario({title, onlyContador, width, selected, setSelected, includeGeral, onlySupervisor}: selProps){
     const [formas, setFormas] = useState<IUsuario[]>([]);
+    const {isInRole} = useContext(AuthContext);
     const loadFormas = async () => {
            api.get(`/User/List`)
            .then(({data}: AxiosResponse) => {
@@ -34,7 +35,7 @@ export  default function SelectUsuario({title, onlyContador, width, selected, se
     function getData() {
         var data = [] as any[];
         formas.map((forma) => {
-            if((!onlyContador || (onlyContador && forma.isContador)) && (!onlySupervisor || (onlySupervisor && forma.isAdmin))){
+            if((!onlyContador || (onlyContador && forma.isContador)) && (!onlySupervisor || (onlySupervisor && isInRole(['SUPERVISOR'])))){
                 var x = {
                     value: forma.userName?.toUpperCase(),
                     label: forma.userName?.toUpperCase() || ''

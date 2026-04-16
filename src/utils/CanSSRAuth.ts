@@ -1,43 +1,28 @@
-import {GetServerSideProps, GetServerSidePropsContext, GetServerSidePropsResult} from 'next';
-import {parseCookies, destroyCookie} from'nookies';
-import { AuthTokenError } from '../services/errors/AuthTokenError';
+import { Role } from "@/interfaces/IUsuario";
+import { GetServerSidePropsContext } from "next";
+import { parseCookies } from "nookies";
 
-//funcao para paginas que so logados podem teer acesso
-
-export function canSSRAuth<P>(fn: GetServerSideProps<P>){
-   
-
-
-    return async (ctx:GetServerSidePropsContext): Promise<GetServerSidePropsResult<P>> =>{
-
+// utils/canSSR.ts
+export function canSSRAuth(allowedRoles?: Role[]) {
+    return async (ctx: GetServerSidePropsContext) => {
         const cookies = parseCookies(ctx);
-       
-        const token  = cookies['@web_admin.token'];
-        
-        if(!token){
-            return{
-                redirect:{
-                      destination: '/',
-                      permanent: false
-                }
+        const token = cookies['@web_admin.token'];
+
+        if (!token) {
+            return { redirect: { destination: '/', permanent: false } };
+        }
+
+        // Se passou roles, verifica
+        if (allowedRoles?.length) {
+            const rolesStr = cookies['@web_admin.roles'];
+            const roles: Role[] = rolesStr ? JSON.parse(rolesStr) : [];
+            const hasAccess = roles.some(r => allowedRoles.includes(r));
+
+            if (!hasAccess) {
+                return { redirect: { destination: '/dashboard', permanent: false } };
             }
         }
 
-
-        try{
-        return await fn(ctx);
-        }catch(err){
-          if(err instanceof AuthTokenError){
-             destroyCookie(ctx, '@nextauth.token');
-
-             return{
-                redirect:{
-                    destination: '/',
-                    permanent: false
-                }
-             }
-          }
-        }
+        return { props: {} };
     }
 }
-

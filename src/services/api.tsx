@@ -5,10 +5,13 @@ import { signOut } from '../contexts/AuthContext';
 
 export function setupAPIClient(ctx = undefined) {
     let cookies = parseCookies(ctx);
+    const baseURL =
+        process.env.NODE_ENV === "development"
+            ? "http://localhost:7020/api"
+            : "https://pdv.krdsys.tech/api";
 
     const api = axios.create({
-      baseURL: 'https://pdv.krdsys.tech/api',
-      // baseURL: 'http://localhost:7020/api',
+        baseURL: baseURL,
         headers: {
             Authorization: `Bearer ${cookies['@web_admin.token']}`,
         }

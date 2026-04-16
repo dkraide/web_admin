@@ -18,7 +18,7 @@ export default function Parceiros() {
                 className="mb-3"
             >
                 <Tab  eventKey="financeiro" title="Financeiro">
-                    Vou construir ainda kkk
+                    Em construção...
                 </Tab>
                 <Tab eventKey="empresas" title="Empresas">
                     <TabEmpresas/>
