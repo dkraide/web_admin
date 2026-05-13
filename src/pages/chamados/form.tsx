@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import {
   Container, Card, Row, Col, Form, FloatingLabel,
   Button, Spinner, Alert,
@@ -10,6 +10,7 @@ import {
 } from '@/services/chamadoApi';
 import SelectEmpresa from '@/components/Selects/SelectEmpresa';
 import SelectUsuario from '@/components/Selects/SelectUsuario';
+import { AuthContext } from '@/contexts/AuthContext';
 
 interface FormState {
   title: string;
@@ -35,6 +36,7 @@ export default function ChamadoFormPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [validated, setValidated] = useState(false);
+  const {user} = useContext(AuthContext);
 
   useEffect(() => {
     if (!id) return;
@@ -84,7 +86,7 @@ export default function ChamadoFormPage() {
           empresaId: Number(form.empresaId),
           employerName: form.employerName,
           employerContact: form.employerContact || null,
-          userCreateId: form.userCreateId,
+          userCreateId: user.id
         };
         await createChamado(body);
       }
@@ -149,7 +151,7 @@ export default function ChamadoFormPage() {
           <Card.Header className="bg-primary text-white fw-bold">Empresa e Contato</Card.Header>
           <Card.Body>
             <Row className="g-3">
-              <Col md={6}>
+              <Col md={12}>
                 <SelectEmpresa selected={Number(form.empresaId ?? 0)} setSelected={(e) => {
                   handleChange({
                     target: {
@@ -184,18 +186,7 @@ export default function ChamadoFormPage() {
                 />
               </Col>
 
-              {!isEdit && (
-                <Col md={6}>
-                  <SelectUsuario selected={form.userCreateId} setSelected={(e) => {
-                    handleChange({
-                      target: {
-                        name: 'userCreateId',
-                        value: e.id
-                      }
-                    })
-                  }} />
-                </Col>
-              )}
+            
             </Row>
           </Card.Body>
         </Card>

@@ -66,7 +66,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 password,
             });
 
-            const { token, nome, empresaId, empresas, roles } = response.data;
+            const { token, nome, empresaId, empresas, roles, id } = response.data;
 
             // Bloqueia cliente antes de qualquer cookie
             const rolesUpper: Role[] = (roles as string[]).map(r => r.toUpperCase() as Role);
@@ -79,6 +79,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             }
 
             const user: IUsuario = {
+                id,
                 userName,
                 nome,
                 empresaSelecionada: empresaId,

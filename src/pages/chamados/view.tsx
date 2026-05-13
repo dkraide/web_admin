@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useContext } from 'react';
 import {
   Container, Card, Row, Col, Badge, Spinner, Alert,
   Button, Form, ListGroup, Modal,
@@ -10,9 +10,8 @@ import {
   CHAMADO_STATUS, STATUS_LABEL, STATUS_COR,
   type ChamadoDto, type ChamadoStatus,
 } from '@/services/chamadoApi';
+import { AuthContext } from '@/contexts/AuthContext';
 
-// ── adapte para o usuário logado ──
-const USUARIO_LOGADO = { id: 'ana.silva', nome: 'Ana Silva' };
 
 const fmtData = (iso: string) =>
   new Date(iso).toLocaleString('pt-BR', {
@@ -26,6 +25,7 @@ const isImage = (fileName: string) =>
 export default function ChamadoViewPage() {
   const router = useRouter();
   const { id } = router.query;
+  const {user} = useContext(AuthContext);
 
   const [chamado, setChamado]       = useState<ChamadoDto | null>(null);
   const [loading, setLoading]       = useState(true);
@@ -80,7 +80,7 @@ export default function ChamadoViewPage() {
     if (!chamado || !message.trim()) return;
     setSendingEvent(true);
     try {
-      const ev = await addChamadoEvent(chamado.id, USUARIO_LOGADO.id, message.trim());
+      const ev = await addChamadoEvent(chamado.id, user.id, message.trim());
       setChamado((prev) => prev ? { ...prev, events: [...prev.events, ev] } : prev);
       setMessage('');
     } catch (e: any) {
