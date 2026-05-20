@@ -1,7 +1,7 @@
 import axios from "axios";
 import IEmpresa from "@/interfaces/IEmpresa";
 
-export async function buscarEmpresaPorCnpj(cnpj: string): Promise<IEmpresa | null> {
+export async function buscarEmpresaPorCnpj(cnpj: string): Promise<any | null> {
     try {
 
         // Remove máscara
@@ -13,7 +13,7 @@ export async function buscarEmpresaPorCnpj(cnpj: string): Promise<IEmpresa | nul
 
         const data = response.data;
 
-        const empresa: IEmpresa = {
+        const empresa =  {
             id: 0, // será gerado pelo backend
             nomeFantasia: data.estabelecimento?.nome_fantasia ?? "",
             razaoSocial: data.razao_social ?? "",
@@ -53,7 +53,7 @@ export async function buscarEmpresaPorCnpj(cnpj: string): Promise<IEmpresa | nul
             assessoria: false,
             usuarioContador: "",
             usuarioSupervisor: "",
-            valorKrd: 0
+            valorKrd: 0,
         };
 
         return empresa;
