@@ -4,6 +4,7 @@ export default interface IEmpresa {
     optante: string
     razaoSocial: string
     cnpj: string
+    onlyNumberCNPJ: string
     inscricaoEstadual: string
     inscricaoMunicipal: string
     endereco: string
@@ -33,5 +34,16 @@ export default interface IEmpresa {
     isMatriz: boolean
     assessoria: boolean
     usuarioContador: string
+    idChatTelegram: number
+    sendVendas: boolean
+    idChatWhatsapp: string
     usuarioSupervisor: string
+    cfmToken: string
+    slug: string
+    // Novos campos de automação
+    plano: 'Teste' | 'Mensal' | 'Semestral' | 'Anual'
+    geraBoleto: boolean
+    geraNfse: boolean
+    enviaEmail: boolean
+    enviaSms: boolean
 }

@@ -118,13 +118,14 @@ export default function SideBar({ ...props }) {
                             <SubMenu hidden={!isInRole(['ADMINISTRADOR'])} rootStyles={subMenuStyle} icon={<FontAwesomeIcon icon={faUser} color={'var(--main)'} />} label="Financeiro">
                                 <MenuItem href={'/financeiro'} > Duplicatas</MenuItem>
                                 <MenuItem href={'/relatorios/notas'} > Notas</MenuItem>
+                                <MenuItem href={'/financeiro/notificacoes'} > Notificações</MenuItem>
                             </SubMenu>
                             <SubMenu hidden={!isInRole(['ADMINISTRADOR', 'SUPORTE'])} rootStyles={subMenuStyle} icon={<FontAwesomeIcon icon={faUser} color={'var(--main)'} />} label="Empresas">
                                 <MenuItem href={'/empresa'} >Empresas</MenuItem>
                                 <MenuItem href={'/empresa/dados'} >Dados</MenuItem>
                                 <MenuItem href={'/empresa/liberarAcesso'} > Liberar</MenuItem>
                             </SubMenu>
-                             <SubMenu hidden={!isInRole(['ADMINISTRADOR', 'SUPORTE'])} rootStyles={subMenuStyle} icon={<FontAwesomeIcon icon={faTasks} color={'var(--main)'} />} label="Suporte">
+                            <SubMenu hidden={!isInRole(['ADMINISTRADOR', 'SUPORTE'])} rootStyles={subMenuStyle} icon={<FontAwesomeIcon icon={faTasks} color={'var(--main)'} />} label="Suporte">
                                 <MenuItem href={'/chamados'} >Chamados</MenuItem>
                                 <MenuItem href={'/pesquisa-satisfacao'} >Pesquisa de satisfação</MenuItem>
                             </SubMenu>

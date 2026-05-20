@@ -1,0 +1,340 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+// ── Page ──────────────────────────────────────────────────────────────────────
+.page {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--background);
+    min-height: 100vh;
+    padding: 32px 40px;
+    color: var(--dark-900);
+}
+
+// ── Header ────────────────────────────────────────────────────────────────────
+.header {
+    margin-bottom: 24px;
+}
+
+.title {
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin: 0 0 4px;
+    color: var(--dark-900);
+}
+
+.subtitle {
+    font-size: 14px;
+    color: var(--dark-700);
+    opacity: 0.6;
+    margin: 0;
+}
+
+// ── Stats ─────────────────────────────────────────────────────────────────────
+.stats {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.stat {
+    background: var(--white);
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 10px;
+    padding: 14px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 90px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.statNum {
+    font-size: 24px;
+    font-weight: 600;
+    font-family: 'DM Mono', monospace;
+    line-height: 1;
+    color: var(--dark-900);
+}
+
+.statLabel {
+    font-size: 12px;
+    color: var(--dark-700);
+    opacity: 0.55;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.statGreen  .statNum { color: var(--green); }
+.statRed    .statNum { color: var(--danger); }
+.statYellow .statNum { color: var(--warning); }
+
+// ── Filtros ───────────────────────────────────────────────────────────────────
+.filters {
+    display: flex;
+    gap: 12px;
+    align-items: flex-end;
+    background: var(--white);
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    flex-wrap: wrap;
+}
+
+.filterGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.filterBusca { flex: 1; min-width: 220px; }
+
+.filterLabel {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--dark-700);
+    opacity: 0.55;
+}
+
+.filterInput {
+    height: 38px;
+    padding: 0 12px;
+    border: 1px solid rgba(0,0,0,0.12);
+    border-radius: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--dark-900);
+    background: var(--background);
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    width: 100%;
+
+    &:focus {
+        border-color: var(--main);
+        box-shadow: 0 0 0 3px rgba(252, 79, 107, 0.12);
+        background: var(--white);
+    }
+}
+
+.btnBuscar {
+    height: 38px;
+    padding: 0 20px;
+    background: var(--main);
+    color: var(--white);
+    border: none;
+    border-radius: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    align-self: flex-end;
+    transition: background 0.15s, transform 0.1s;
+
+    &:hover:not(:disabled) { background: var(--main-light); }
+    &:active:not(:disabled) { transform: scale(0.98); }
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+// ── Tabela ────────────────────────────────────────────────────────────────────
+.tableWrap {
+    background: var(--white);
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    overflow: hidden;
+}
+
+.empty {
+    padding: 48px;
+    text-align: center;
+    color: var(--dark-700);
+    opacity: 0.5;
+    font-size: 14px;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+
+    thead tr {
+        background: var(--background);
+        border-bottom: 1px solid rgba(0,0,0,0.08);
+    }
+
+    th {
+        padding: 11px 14px;
+        text-align: left;
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        color: var(--dark-700);
+        opacity: 0.6;
+        white-space: nowrap;
+    }
+}
+
+.row {
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    cursor: pointer;
+    transition: background 0.1s;
+
+    td { padding: 12px 14px; vertical-align: middle; }
+
+    &:hover { background: var(--background); }
+    &:last-child { border-bottom: none; }
+}
+
+.rowExpanded {
+    background: rgba(173, 163, 255, 0.08);
+    &:hover { background: rgba(173, 163, 255, 0.12); }
+}
+
+.tdMuted    { color: var(--dark-700); opacity: 0.5; font-size: 12.5px; font-family: 'DM Mono', monospace; }
+.tdCenter   { text-align: center; }
+.tdChevron  { text-align: center; color: var(--dark-700); opacity: 0.4; font-size: 10px; }
+
+.empresaCell {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.empresaNome {
+    font-weight: 500;
+    font-size: 13.5px;
+    color: var(--dark-900);
+}
+
+.empresaId {
+    font-size: 11px;
+    color: var(--dark-700);
+    opacity: 0.5;
+    font-family: 'DM Mono', monospace;
+}
+
+.canal {
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+    color: var(--dark-900);
+}
+
+.badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+// ── Detalhe expandido ─────────────────────────────────────────────────────────
+.rowDetail td {
+    padding: 0 !important;
+    border-bottom: 2px solid rgba(173, 163, 255, 0.2);
+}
+
+.detail {
+    padding: 20px 24px;
+    background: rgba(173, 163, 255, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    animation: slideDown 0.15s ease;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.detailSection { display: flex; flex-direction: column; gap: 8px; }
+
+.detailSectionTitle {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--dark-700);
+    opacity: 0.5;
+}
+
+.detailGrid {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+}
+
+.detailKey {
+    display: block;
+    font-size: 11px;
+    color: var(--dark-700);
+    opacity: 0.55;
+    margin-bottom: 2px;
+}
+
+.detailVal {
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--dark-900);
+}
+
+.retorno {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    background: var(--dark-900);
+    color: var(--green);
+    padding: 12px 16px;
+    border-radius: 6px;
+    white-space: pre-wrap;
+    word-break: break-all;
+    margin: 0;
+    max-height: 120px;
+    overflow-y: auto;
+}
+
+// ── Tabela interna (duplicatas) ───────────────────────────────────────────────
+.innerTable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+    background: var(--white);
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 6px;
+    overflow: hidden;
+
+    th {
+        padding: 8px 12px;
+        background: var(--background);
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--dark-700);
+        opacity: 0.6;
+        text-align: left;
+    }
+
+    td {
+        padding: 8px 12px;
+        border-top: 1px solid rgba(0,0,0,0.06);
+        vertical-align: middle;
+        color: var(--dark-900);
+    }
+
+    tr:hover td { background: var(--background); }
+}
+
+.link {
+    color: var(--main);
+    text-decoration: none;
+    font-weight: 500;
+    &:hover { color: var(--main-light); text-decoration: underline; }
+}
