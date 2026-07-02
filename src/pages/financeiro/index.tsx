@@ -12,7 +12,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBarcode, faEdit, faEnvelope, faMailBulk, faPhone, faPrint } from '@fortawesome/free-solid-svg-icons';
 import { endOfMonth, format, startOfMonth } from 'date-fns';
 import IDuplicata from '@/interfaces/IDuplicata';
-import { Badge } from 'react-bootstrap';
+import { Badge, Dropdown, SplitButton } from 'react-bootstrap';
 import SelectEmpresa from '@/components/Selects/SelectEmpresa';
 import DuplicataForm from '@/components/Modals/Financeiro/DuplicataForm';
 import _ from 'lodash';
@@ -74,9 +74,9 @@ export default function Financeiro() {
 
     function getFiltered() {
         var res = list.filter(p => {
-            if(search.empresa && search.empresa > 0 && p.empresaId != search.empresa) return false;
-            if(search.userName && search.userName != 'GERAL' && search.userName.length > 0 && p.empresa?.usuarioSupervisor?.toUpperCase() != search.userName.toUpperCase()) return false;
-            return (p.empresaId + (p.empresa?.nomeFantasia || '')).toLowerCase().includes((search?.searchString || '').toLowerCase())
+            if (search.empresa && search.empresa > 0 && p.empresaId != search.empresa) return false;
+            if (search.userName && search.userName != 'GERAL' && search.userName.length > 0 && p.empresa?.usuarioSupervisor?.toUpperCase() != search.userName.toUpperCase()) return false;
+            return (p.id.toString() + p.empresaId + (p.empresa?.nomeFantasia || '')).toLowerCase().includes((search?.searchString || '').toLowerCase())
         });
         return res;
     }
@@ -105,6 +105,18 @@ export default function Financeiro() {
                 loadData();
             }).catch((err) => {
                 toast.error(`Ops... parece que houve um erro para gerar o boleto. Confira os dados do cliente!`);
+            })
+        setLoading(false);
+    }
+
+    async function vincular(duplicataId) {
+        setLoading(true);
+        await api.post(`/Boleto/BuscarBoletoGerado?duplicataId=${duplicataId}`)
+            .then(({ data }) => {
+                toast.success(`Boleto vinculado com sucesso!`);
+                loadData();
+            }).catch((err) => {
+                toast.error(`Ops... parece que houve um erro para vincular o boleto. Confira os dados do cliente!`);
             })
         setLoading(false);
     }
@@ -139,11 +151,24 @@ export default function Financeiro() {
             name: '#',
             selector: row => row.id,
             cell: ({ id }: IDuplicata) =>
-                <>  <CustomButton size={'sm'} onClick={() => { setSearch({ ...search, edit: id }) }} typeButton={'primary'}><FontAwesomeIcon icon={faEdit} /></CustomButton>
-                    <CustomButton style={{ marginRight: 5, marginLeft: 5 }} size={'sm'} onClick={() => { setSearch({ ...search, email: id }) }} typeButton={'primary'}><FontAwesomeIcon icon={faEnvelope} /></CustomButton>
-                    <CustomButton size={'sm'} onClick={() => { sendWhatsapp(id) }} typeButton={'primary'}><FontAwesomeIcon icon={faPhone} /></CustomButton></>,
+                <SplitButton
+                    size="sm"
+                    variant="primary"
+                    id={`split-button-duplicata-${id}`}
+                    title={<><FontAwesomeIcon icon={faEdit} /> {id}</>}
+                    onClick={() => { setSearch({ ...search, edit: id }) }}
+                >
+                    <Dropdown.Item onClick={() => { setSearch({ ...search, email: id }) }}>
+                        <FontAwesomeIcon icon={faEnvelope} className="me-2" />
+                        Enviar e-mail
+                    </Dropdown.Item>
+                    <Dropdown.Item onClick={() => { sendWhatsapp(id) }}>
+                        <FontAwesomeIcon icon={faPhone} className="me-2" />
+                        Enviar WhatsApp
+                    </Dropdown.Item>
+                </SplitButton>,
             sortable: true,
-            width: '15%'
+            width: '150px'
         },
         {
             name: 'Empresa',
@@ -172,29 +197,43 @@ export default function Financeiro() {
         {
             name: 'Boleto',
             selector: (row: IDuplicata) => row.boletoId,
-            cell: (row: IDuplicata) => row.boletoId ?
-                <>
-                    <CustomButton size={'sm'} typeButton={'primary'}
-                        style={{ marginRight: 5 }}
-                        onClick={() => {
-                            window.open(row.url, 'about-blank')
-                        }}
-                    ><FontAwesomeIcon icon={faPrint} /></CustomButton>
-                    <CustomButton size={'sm'} typeButton={'primary'}
-                        onClick={() => {
-                            navigator.clipboard.writeText(row.codBarras);
-                            toast.success(`Codigo copiado!`)
-                        }}
-                    ><FontAwesomeIcon icon={faBarcode} /></CustomButton>
-                </> :
-                <>
-                    <CustomButton size={'sm'} typeButton={'dark'}
-                        style={{ marginRight: 5 }}
-                        onClick={() => {
-                            geraBoleto(row.id);
-                        }}
-                    ><b>Gerar</b></CustomButton>
-                </>,
+            cell: (row: IDuplicata) => {
+                return row.boletoId ?
+                    <>
+                        <CustomButton size={'sm'} typeButton={'primary'}
+                            style={{ marginRight: 5 }}
+                            onClick={() => {
+                                window.open(row.url, 'about-blank');
+                            }}
+                        ><FontAwesomeIcon icon={faPrint} /></CustomButton>
+                        <CustomButton size={'sm'} typeButton={'primary'}
+                            onClick={() => {
+                                navigator.clipboard.writeText(row.codBarras);
+                                toast.success(`Codigo copiado!`);
+                            }}
+                        ><FontAwesomeIcon icon={faBarcode} /></CustomButton>
+                    </> :
+                    <>
+                        <SplitButton
+                            size="sm"
+                            variant="primary"
+                            title={<b>Gerar</b>}
+                            id={`split-button-gerar-${row.id}`}
+                            style={{ marginRight: 5 }}
+                            onClick={() => {
+                                geraBoleto(row.id);
+                            }}
+                        >
+                            <Dropdown.Item
+                                onClick={() => {
+                                    vincular(row.id);
+                                }}
+                            >
+                                Vincular
+                            </Dropdown.Item>
+                        </SplitButton>
+                    </>;
+            },
             sortable: true,
             width: '10%'
         },
