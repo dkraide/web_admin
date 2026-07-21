@@ -5,7 +5,7 @@ import IDuplicata from "@/interfaces/IDuplicata"
 export interface FiltroNotificacoes {
     dataIn: string       // yyyy-MM-dd
     dataFim: string      // yyyy-MM-dd
-    canal: 0 | 1 | 2    // 0=Geral, 1=Email, 2=SMS
+    canal: 0 | 1 | 2 | 3    // 0=Geral, 1=Email, 2=SMS, 3=WhatsApp
     busca?: string       // nomeFantasia, nro duplicata ou empresaId
 }
 

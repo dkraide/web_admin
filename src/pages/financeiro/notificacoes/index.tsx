@@ -14,6 +14,7 @@ const TIPO_LABEL: Record<TipoNotificacao, string> = {
     FaturaVenceHoje: 'Vence Hoje',
     FaturaPaga:      'Paga',
     FaturaVencida:   'Vencida',
+    Manual:          'Manual',
 }
 
 const TIPO_COLOR: Record<TipoNotificacao, string> = {
@@ -21,6 +22,7 @@ const TIPO_COLOR: Record<TipoNotificacao, string> = {
     FaturaVenceHoje: '#f59e0b',
     FaturaPaga:      '#10b981',
     FaturaVencida:   '#ef4444',
+    Manual:          '#8b5cf6',
 }
 
 const STATUS_COLOR: Record<StatusNotificacao, string> = {
@@ -51,7 +53,7 @@ export default function NotificacoesPage() {
     const hoje = new Date()
     const [dataIn,  setDataIn]  = useState(format(startOfMonth(hoje), 'yyyy-MM-dd'))
     const [dataFim, setDataFim] = useState(format(endOfMonth(hoje),   'yyyy-MM-dd'))
-    const [canal,   setCanal]   = useState<0 | 1 | 2>(0)
+    const [canal,   setCanal]   = useState<0 | 1 | 2 | 3>(0)
     const [busca,   setBusca]   = useState('')
     const [items,   setItems]   = useState<IEmpresaNotificacao[]>([])
     const [total,   setTotal]   = useState(0)
@@ -137,11 +139,12 @@ export default function NotificacoesPage() {
                     <select
                         className={styles.filterInput}
                         value={canal}
-                        onChange={e => setCanal(Number(e.target.value) as 0 | 1 | 2)}
+                        onChange={e => setCanal(Number(e.target.value) as 0 | 1 | 2 | 3)}
                     >
                         <option value={0}>Geral</option>
                         <option value={1}>E-mail</option>
                         <option value={2}>SMS</option>
+                        <option value={3}>WhatsApp</option>
                     </select>
                 </div>
                 <div className={`${styles.filterGroup} ${styles.filterBusca}`}>
