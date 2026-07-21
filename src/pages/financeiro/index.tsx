@@ -17,7 +17,6 @@ import SelectEmpresa from '@/components/Selects/SelectEmpresa';
 import DuplicataForm from '@/components/Modals/Financeiro/DuplicataForm';
 import _ from 'lodash';
 import DuplicataMassaForm from '@/components/Modals/Financeiro/DuplicataMassaForm';
-import { fGetOnlyNumber } from '@/utils/functions';
 import NFSEForm from '@/components/Modals/Financeiro/NFSEForm/DuplicataForm';
 import EnviarEmailForm from '@/components/Modals/Financeiro/EnviarEmailForm';
 import SelectUsuario from '@/components/Selects/SelectUsuario';
@@ -121,27 +120,18 @@ export default function Financeiro() {
         setLoading(false);
     }
     async function sendWhatsapp(duplicataId) {
-
-        var ind = _.findIndex(list, p => p.id == duplicataId);
-        var d = list[ind];
-        var str = `Ola, sua mensalidade da *KRD System* Chegou!\n
-                \nVencimento: ${format(new Date(d.dataVencimento), 'dd/MM/yyyy')}
-                \nValor: R$ ${d.valor.toFixed(2)}
-                \nEmpresa: ${d.empresa.nomeFantasia}
-                \n\nNossa Chave *PIX*!
-                \nCNPJ: 34.073.667/0001-36\n`;
-
-        if (d.codBarras) {
-            str += `\nCodigo de Barras:\n\n${d.codBarras}\n`
-        };
-        if (d.url) {
-            str += `\nPara baixar o PDF do boleto:\n\n${d.url}`
-        };
-        var encodedStr = encodeURIComponent(str);
-        var url = `https://api.whatsapp.com/send?phone=${fGetOnlyNumber(d.empresa.telefone)}&text=${encodedStr}`;
-
-        window.open(url);
-
+        setLoading(true);
+        await api.post(`/Financeiro/Notificacoes/Manual`, {
+            duplicataIds: [duplicataId],
+            canal: 'WhatsApp'
+        })
+            .then(({ data }: AxiosResponse) => {
+                toast.success(data?.mensagem || `Notificação de WhatsApp criada. O envio ocorre em até 1 minuto.`);
+            })
+            .catch((err: AxiosError) => {
+                toast.error(`Erro ao criar notificação de WhatsApp. ${err.response?.data || err.message}`);
+            });
+        setLoading(false);
     }
 
 

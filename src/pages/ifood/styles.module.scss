@@ -1,0 +1,323 @@
+.pagina {
+  min-height: 100vh;
+  background: var(--background);
+  padding: 32px 40px 64px;
+  color: var(--dark-900);
+}
+
+.cabecalho {
+  max-width: 1200px;
+  margin: 0 auto 28px;
+
+  h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 6px 0 6px;
+    color: var(--dark-900);
+  }
+
+  p {
+    font-size: 14px;
+    color: rgba(16, 16, 38, 0.65);
+    margin: 0;
+  }
+}
+
+.eyebrow {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--main);
+}
+
+.conteudo {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 280px 1fr 280px;
+  gap: 20px;
+  align-items: start;
+
+  @media (max-width: 1080px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ---------- blocos comuns ----------
+
+.listaLojas,
+.painelDetalhes,
+.painelLogs {
+  background: var(--white);
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 1px 2px rgba(16, 16, 38, 0.06), 0 8px 24px rgba(16, 16, 38, 0.04);
+}
+
+.listaCabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+
+  h2 {
+    font-size: 15px;
+    font-weight: 700;
+    margin: 0;
+  }
+}
+
+.painelLogs h2 {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0 0 14px;
+}
+
+.carregando,
+.vazio,
+.estadoVazio {
+  font-size: 13px;
+  color: rgba(16, 16, 38, 0.55);
+  padding: 18px 4px;
+  text-align: center;
+}
+
+.estadoVazio {
+  padding: 60px 12px;
+}
+
+.alertaErro {
+  background: rgba(199, 73, 73, 0.1);
+  color: var(--danger);
+  border: 1px solid rgba(199, 73, 73, 0.25);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+// ---------- botões ----------
+
+.botaoPrimario,
+.botaoSecundario {
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s ease, transform 0.05s ease;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+}
+
+.botaoPrimario {
+  background: var(--main);
+  color: var(--white);
+  padding: 10px 16px;
+
+  &:hover:not(:disabled) {
+    background: var(--main-light);
+  }
+}
+
+.botaoSecundario {
+  background: transparent;
+  color: var(--dark-900);
+  border: 1px solid rgba(16, 16, 38, 0.15);
+  padding: 6px 12px;
+
+  &:hover:not(:disabled) {
+    border-color: var(--main);
+    color: var(--main);
+  }
+}
+
+// ---------- lista de lojas ----------
+
+.cardsLojas {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cardLoja {
+  width: 100%;
+  text-align: left;
+  background: var(--background);
+  border: 1px solid transparent;
+  border-radius: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  transition: border-color 0.15s ease, background 0.15s ease;
+
+  &:hover {
+    border-color: var(--main-light);
+  }
+}
+
+.cardLojaAtiva {
+  background: rgba(252, 79, 107, 0.08);
+  border-color: var(--main);
+}
+
+.cardLojaNome {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--dark-900);
+}
+
+.cardLojaRazao {
+  font-size: 12px;
+  color: rgba(16, 16, 38, 0.55);
+}
+
+// ---------- painel de detalhes ----------
+
+.painelTopo {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+
+  h2 {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0;
+  }
+}
+
+.subtitulo {
+  font-size: 13px;
+  color: rgba(16, 16, 38, 0.55);
+}
+
+.badgeStatus {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 999px;
+  margin-bottom: 16px;
+}
+
+.badgePonto {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.badgeDisponivel {
+  background: rgba(103, 159, 125, 0.14);
+  color: var(--green);
+}
+
+.badgeIndisponivel {
+  background: rgba(199, 73, 73, 0.12);
+  color: var(--danger);
+}
+
+.gradeDetalhes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.blocoDetalhe {
+  background: var(--background);
+  border-radius: 10px;
+  padding: 14px 16px;
+
+  h3 {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: rgba(16, 16, 38, 0.5);
+    margin: 0 0 10px;
+  }
+
+  dl {
+    margin: 0;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 6px 10px;
+  }
+
+  dt {
+    font-size: 12px;
+    color: rgba(16, 16, 38, 0.55);
+  }
+
+  dd {
+    font-size: 12px;
+    font-weight: 600;
+    margin: 0;
+    text-align: right;
+    color: var(--dark-900);
+  }
+}
+
+.descricao {
+  font-size: 12px;
+  color: rgba(16, 16, 38, 0.7);
+  margin: 10px 0 0;
+  line-height: 1.5;
+}
+
+// ---------- histórico ----------
+
+.listaLogs {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 560px;
+  overflow-y: auto;
+}
+
+.itemLog {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+  border-left: 2px solid var(--blue);
+  background: var(--background);
+  border-radius: 0 8px 8px 0;
+}
+
+.itemLogData {
+  font-size: 11px;
+  color: rgba(16, 16, 38, 0.5);
+}
+
+.itemLogAcao {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--dark-900);
+}
+
+.itemLogDetalhes {
+  font-size: 11px;
+  color: rgba(16, 16, 38, 0.6);
+}

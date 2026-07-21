@@ -14,6 +14,20 @@ export const nameof = <T>(name: keyof T) => name;
 export const fGetOnlyNumber = (value) => {
     return value.replace(/\D/g, "");
 }
+// Converte "yyyy-MM-dd" (vindo de input type=date) em uma Date na meia-noite
+// LOCAL, evitando o parse UTC de `new Date("yyyy-MM-dd")` que recua a data um
+// dia em fusos negativos (ex: UTC-3) ao ser reserializado para o backend.
+export const fParseLocalDate = (value: string): Date => {
+    if (!value) {
+        return new Date();
+    }
+    const [ano, mes, dia] = value.split('-').map(Number);
+    if (!ano || !mes || !dia) {
+        return new Date(value);
+    }
+    return new Date(ano, mes - 1, dia);
+}
+
 export const  distance = (lat1, lon1, lat2, lon2, unit) => {
     const radlat1 = Math.PI * lat1/180;
     const radlat2 = Math.PI * lat2/180;

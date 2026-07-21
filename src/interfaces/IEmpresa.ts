@@ -28,6 +28,7 @@ export default interface IEmpresa {
     diaCobranca: number
     email: string
     telefone: string
+    whatsappFormatado: string
     valorMensal: number
     valorKrd: number
     formaPagamento: string

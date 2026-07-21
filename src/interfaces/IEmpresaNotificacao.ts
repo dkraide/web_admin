@@ -2,7 +2,7 @@ import IDuplicata from "./IDuplicata"
 import IEmpresa from "./IEmpresa"
 
 export type TipoNotificacao = 'FaturaCriada' | 'FaturaVenceHoje' | 'FaturaPaga' | 'FaturaVencida'
-export type CanalNotificacao = 'Email' | 'SMS'
+export type CanalNotificacao = 'Email' | 'SMS' | 'WhatsApp'
 export type StatusNotificacao = 'Pendente' | 'Enviado' | 'Erro'
 
 export interface IEmpresaNotificacaoDuplicata {

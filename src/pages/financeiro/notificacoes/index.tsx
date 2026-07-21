@@ -3,6 +3,8 @@ import { format, startOfMonth, endOfMonth } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { getNotificacoes } from "@/services/apiFinanceiro"
 import IEmpresaNotificacao, { CanalNotificacao, StatusNotificacao, TipoNotificacao } from "@/interfaces/IEmpresaNotificacao"
+import CustomButton from "@/components/ui/Buttons"
+import NotificacaoManualForm from "@/components/Modals/Financeiro/NotificacaoManualForm"
 import styles from "./styles.module.scss"
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -28,8 +30,9 @@ const STATUS_COLOR: Record<StatusNotificacao, string> = {
 }
 
 const CANAL_ICON: Record<CanalNotificacao, string> = {
-    Email: '✉',
-    SMS:   '💬',
+    Email:    '✉',
+    SMS:      '💬',
+    WhatsApp: '📱',
 }
 
 function fmt(d?: Date | string) {
@@ -54,6 +57,7 @@ export default function NotificacoesPage() {
     const [total,   setTotal]   = useState(0)
     const [loading, setLoading] = useState(false)
     const [expanded, setExpanded] = useState<number | null>(null)
+    const [criarOpen, setCriarOpen] = useState(false)
 
     const buscar = useCallback(async () => {
         setLoading(true)
@@ -85,6 +89,7 @@ export default function NotificacoesPage() {
                     <h1 className={styles.title}>Notificações</h1>
                     <p className={styles.subtitle}>Histórico de envios de e-mail e SMS por empresa</p>
                 </div>
+                <CustomButton typeButton={'dark'} onClick={() => setCriarOpen(true)}>Criar Notificação</CustomButton>
             </div>
 
             {/* ── Stats ── */}
@@ -312,6 +317,11 @@ export default function NotificacoesPage() {
                     </table>
                 )}
             </div>
+
+            {criarOpen && <NotificacaoManualForm isOpen={criarOpen} setClose={(res) => {
+                setCriarOpen(false)
+                if (res) buscar()
+            }} />}
 
         </div>
     )

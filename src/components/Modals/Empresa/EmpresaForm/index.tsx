@@ -13,7 +13,7 @@ import SelectStatus from "@/components/Selects/SelectStatus";
 import IEmpresa from "@/interfaces/IEmpresa";
 import SelectEstado from "@/components/Selects/SelectEstado";
 import SelectCidade from "@/components/Selects/SelectCidade";
-import { fGetNumber, fGetOnlyNumber } from "@/utils/functions";
+import { fGetNumber, fGetOnlyNumber, fParseLocalDate } from "@/utils/functions";
 import { apiViaCep } from "@/services/apiViaCep";
 import SelectSimNao from "@/components/Selects/SelectSimNao";
 import { format } from "date-fns";
@@ -21,6 +21,7 @@ import SelectUsuario from "@/components/Selects/SelectUsuario";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { buscarEmpresaPorCnpj } from "@/services/cnpjApi";
+import WhatsappInput from "@/components/ui/WhatsappInput";
 
 interface Props {
     isOpen: boolean
@@ -71,14 +72,15 @@ export default function EmpresaForm({ user, isOpen, id, setClose, color }: Props
         objeto.complemento      = data.complemento
         objeto.cep              = data.cep
         objeto.bairro           = data.bairro
-        objeto.dataCriacao      = new Date(data.dataCriacao)
-        objeto.inicioPagamento  = new Date(data.inicioPagamento)
+        objeto.dataCriacao      = fParseLocalDate(data.dataCriacao)
+        objeto.inicioPagamento  = fParseLocalDate(data.inicioPagamento)
         objeto.valorMensal      = fGetNumber(data.valorMensal)
         objeto.valorKrd         = fGetNumber(data.valorKrd)
         objeto.diaCobranca      = fGetNumber(data.diaCobranca)
         objeto.formaPagamento   = data.formaPagamento
         objeto.email            = data.email
         objeto.telefone         = data.telefone
+        // whatsappFormatado ja e atualizado direto no objeto pelo WhatsappInput
 
         const endpoint = id > 0 ? `Empresa/Update` : `Empresa/Create`
         const method   = id > 0 ? api.put : api.post
@@ -188,7 +190,8 @@ export default function EmpresaForm({ user, isOpen, id, setClose, color }: Props
                             <SelectEstado selected={objeto.uf} setSelected={(v) => setObjeto({ ...objeto, uf: v.sigla })} width={'23%'} />
                             <SelectCidade uf={objeto.uf} selected={objeto.codCidade} setSelected={(v) => setObjeto({ ...objeto, codCidade: v.id, cidade: v.nome })} width={'23%'} />
                             <InputForm defaultValue={objeto.email} width={'50%'} title={'E-mail'} errors={errors} inputName={"email"} register={register} />
-                            <InputForm defaultValue={objeto.telefone} width={'50%'} title={'Telefone'} errors={errors} inputName={"telefone"} register={register} />
+                            <InputForm defaultValue={objeto.telefone} width={'25%'} title={'Telefone'} errors={errors} inputName={"telefone"} register={register} />
+                            <WhatsappInput width={'25%'} title={'WhatsApp'} value={objeto.whatsappFormatado} onChange={(v) => setObjeto({ ...objeto, whatsappFormatado: v })} />
                         </div>
                     )}
 
