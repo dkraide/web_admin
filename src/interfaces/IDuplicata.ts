@@ -8,6 +8,7 @@ export default interface IDuplicata {
     dataVencimento: Date
     dataPagamento: Date
     valor: number
+    valorRepasse: number
     nossoNumero: string
     codBarras: string
     isCancelado: boolean

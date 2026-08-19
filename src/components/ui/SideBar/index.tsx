@@ -119,6 +119,7 @@ export default function SideBar({ ...props }) {
                                 <MenuItem href={'/financeiro'} > Duplicatas</MenuItem>
                                 <MenuItem href={'/relatorios/notas'} > Notas</MenuItem>
                                 <MenuItem href={'/financeiro/notificacoes'} > Notificações</MenuItem>
+                                <MenuItem href={'/financeiro/parceiros'} > Parceiros</MenuItem>
                             </SubMenu>
                             <SubMenu hidden={!isInRole(['ADMINISTRADOR', 'SUPORTE'])} rootStyles={subMenuStyle} icon={<FontAwesomeIcon icon={faUser} color={'var(--main)'} />} label="Empresas">
                                 <MenuItem href={'/empresa'} >Empresas</MenuItem>

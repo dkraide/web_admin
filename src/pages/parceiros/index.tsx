@@ -4,6 +4,9 @@ import { AuthContext } from '@/contexts/AuthContext';
 import { Tab, Tabs } from 'react-bootstrap';
 import TabEmpresas from '@/components/Parceiros/Tabs/Empresas';
 import TabUsuarios from '@/components/Parceiros/Tabs/Usuarios';
+import TabFinanceiro from '@/components/Parceiros/Tabs/Financeiro';
+import TabSaudeLoja from '@/components/Parceiros/Tabs/SaudeLoja';
+import TabChamados from '@/components/Parceiros/Tabs/Chamados';
 
 
 export default function Parceiros() {
@@ -17,8 +20,14 @@ export default function Parceiros() {
                 id="uncontrolled-tab-example"
                 className="mb-3"
             >
+                <Tab eventKey="saude" title="Saúde das lojas">
+                    <TabSaudeLoja/>
+                </Tab>
+                <Tab eventKey="chamados" title="Chamados">
+                    <TabChamados/>
+                </Tab>
                 <Tab  eventKey="financeiro" title="Financeiro">
-                    Em construção...
+                    <TabFinanceiro/>
                 </Tab>
                 <Tab eventKey="empresas" title="Empresas">
                     <TabEmpresas/>
