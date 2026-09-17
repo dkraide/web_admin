@@ -34,7 +34,7 @@ export  default function SelectEmpresa({width, selected, setSelected, includeGer
         formas.map((forma) => {
             var x = {
                 value: forma.id.toString(),
-                label: forma.nomeFantasia || ''
+                label: `${forma.id} - ${forma.nomeFantasia || ''}`
             }
             data.push(x);
         });

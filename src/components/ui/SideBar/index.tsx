@@ -124,6 +124,8 @@ export default function SideBar({ ...props }) {
                             <SubMenu hidden={!isInRole(['ADMINISTRADOR', 'SUPORTE'])} rootStyles={subMenuStyle} icon={<FontAwesomeIcon icon={faUser} color={'var(--main)'} />} label="Empresas">
                                 <MenuItem href={'/empresa'} >Empresas</MenuItem>
                                 <MenuItem href={'/empresa/dados'} >Dados</MenuItem>
+                                <MenuItem href={'/empresa/criarDadosIniciais'} >Criar Dados Iniciais</MenuItem>
+                                <MenuItem href={'/empresa/copiarProdutos'} >Copiar Produtos</MenuItem>
                                 <MenuItem href={'/empresa/liberarAcesso'} > Liberar</MenuItem>
                             </SubMenu>
                             <SubMenu hidden={!isInRole(['ADMINISTRADOR', 'SUPORTE'])} rootStyles={subMenuStyle} icon={<FontAwesomeIcon icon={faTasks} color={'var(--main)'} />} label="Suporte">

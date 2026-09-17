@@ -56,7 +56,18 @@ export default function EmpresaForm({ user, isOpen, id, setClose, color }: Props
                     setLoading(false)
                 })
         } else {
-            setLoading(false)
+            // nova empresa: status ativo por padrão e código pré-preenchido (maior id + 1)
+            api.get(`/Empresa/List`)
+                .then(({ data }: AxiosResponse) => {
+                    const maiorId = (data as IEmpresa[]).reduce((max, e) => e.id > max ? e.id : max, 0)
+                    setObjeto({ statusPagamento: true, id: maiorId + 1 } as IEmpresa)
+                    setLoading(false)
+                })
+                .catch((err: AxiosError) => {
+                    toast.error(`Erro ao gerar código da empresa. ${err.message}`)
+                    setObjeto({ statusPagamento: true } as IEmpresa)
+                    setLoading(false)
+                })
         }
     }, [])
 
