@@ -120,6 +120,7 @@ export default function NFSEForm({ isOpen, id, setClose, color }: props) {
                         <InputGroup width={'10%'} value={format(new Date(objeto.dataEmissao), 'dd/MM/yy')} title={'Emissao'} />
                         <InputGroup width={'15%'} value={format(new Date(objeto.dataVencimento), 'dd/MM/yy')} title={'Vencimento'} />
                         <InputGroup width={'15%'} value={objeto.valor.toFixed(2)} title={'Valor'} />
+                        <InputGroup width={'100%'} value={objeto.statusNFSE} title={'Status'} />
                     </div>
                     <div className={styles.protocolo} hidden={!objeto.protocolo}>
                         <InputGroup width={'15%'} value={objeto.numeroRPS} title={'RPS'} />
