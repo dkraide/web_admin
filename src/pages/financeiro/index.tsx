@@ -9,7 +9,7 @@ import CustomTable from '@/components/ui/CustomTable';
 import { toast } from 'react-toastify';
 import CustomButton from '@/components/ui/Buttons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBarcode, faEdit, faEnvelope, faMailBulk, faPhone, faPrint } from '@fortawesome/free-solid-svg-icons';
+import { faBarcode, faEdit, faEnvelope, faMailBulk, faPhone, faPrint, faSync } from '@fortawesome/free-solid-svg-icons';
 import { endOfMonth, format, startOfMonth } from 'date-fns';
 import IDuplicata from '@/interfaces/IDuplicata';
 import { Badge, Dropdown, SplitButton } from 'react-bootstrap';
@@ -108,6 +108,37 @@ export default function Financeiro() {
         setLoading(false);
     }
 
+    async function atualizarBoleto(duplicataId) {
+        setLoading(true);
+        await api.put(`/Boleto/AtualizarBoleto?duplicataId=${duplicataId}`)
+            .then(({ data }) => {
+                toast.success(`Boleto atualizado com sucesso!`);
+                loadData();
+            }).catch((err) => {
+                toast.error(`Ops... parece que houve um erro para atualizar o boleto. ${getErrorMessage(err)}`);
+            })
+        setLoading(false);
+    }
+
+    function getErrorMessage(err: any): string {
+        const data = err?.response?.data;
+        if (data) {
+            if (typeof data === 'string') {
+                // O backend pode devolver o proprio JSON de erro do Inter como string.
+                try {
+                    const parsed = JSON.parse(data);
+                    return parsed?.detail || parsed?.message || parsed?.title || data;
+                } catch {
+                    return data;
+                }
+            }
+            if (typeof data === 'object') {
+                return data.detail || data.message || data.title || JSON.stringify(data);
+            }
+        }
+        return err?.message || 'Erro desconhecido';
+    }
+
     async function vincular(duplicataId) {
         setLoading(true);
         await api.post(`/Boleto/BuscarBoletoGerado?duplicataId=${duplicataId}`)
@@ -146,6 +177,7 @@ export default function Financeiro() {
                     variant="primary"
                     id={`split-button-duplicata-${id}`}
                     title={<><FontAwesomeIcon icon={faEdit} /> {id}</>}
+                    renderMenuOnMount
                     onClick={() => { setSearch({ ...search, edit: id }) }}
                 >
                     <Dropdown.Item onClick={() => { setSearch({ ...search, email: id }) }}>
@@ -189,20 +221,35 @@ export default function Financeiro() {
             selector: (row: IDuplicata) => row.boletoId,
             cell: (row: IDuplicata) => {
                 return row.boletoId ?
-                    <>
-                        <CustomButton size={'sm'} typeButton={'primary'}
-                            style={{ marginRight: 5 }}
-                            onClick={() => {
-                                window.open(row.url, 'about-blank');
-                            }}
-                        ><FontAwesomeIcon icon={faPrint} /></CustomButton>
-                        <CustomButton size={'sm'} typeButton={'primary'}
+                    <SplitButton
+                        size="sm"
+                        variant="primary"
+                        title={<FontAwesomeIcon icon={faPrint} />}
+                        id={`split-button-boleto-${row.id}`}
+                        style={{ marginRight: 5 }}
+                        renderMenuOnMount
+                        onClick={() => {
+                            window.open(row.url, 'about-blank');
+                        }}
+                    >
+                        <Dropdown.Item
                             onClick={() => {
                                 navigator.clipboard.writeText(row.codBarras);
                                 toast.success(`Codigo copiado!`);
                             }}
-                        ><FontAwesomeIcon icon={faBarcode} /></CustomButton>
-                    </> :
+                        >
+                            <FontAwesomeIcon icon={faBarcode} className="me-2" />
+                            Copiar cód. barras
+                        </Dropdown.Item>
+                        <Dropdown.Item
+                            onClick={() => {
+                                atualizarBoleto(row.id);
+                            }}
+                        >
+                            <FontAwesomeIcon icon={faSync} className="me-2" />
+                            Atualizar
+                        </Dropdown.Item>
+                    </SplitButton> :
                     <>
                         <SplitButton
                             size="sm"
@@ -210,6 +257,7 @@ export default function Financeiro() {
                             title={<b>Gerar</b>}
                             id={`split-button-gerar-${row.id}`}
                             style={{ marginRight: 5 }}
+                            renderMenuOnMount
                             onClick={() => {
                                 geraBoleto(row.id);
                             }}

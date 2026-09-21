@@ -1,0 +1,135 @@
+.wrapper {
+    width: 100%;
+    // overflow visivel de proposito: garante que dropdowns dentro das celulas
+    // nao sejam recortados (problema do react-data-table com poucas linhas).
+    overflow: visible;
+}
+
+.tableScroll {
+    width: 100%;
+    // Sem overflow-y: evita recorte vertical de menus/dropdowns.
+    overflow-x: auto;
+    overflow-y: visible;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.table th,
+.table td {
+    padding: 10px 12px;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.thead th {
+    background-color: var(--main, #0d6efd);
+    color: var(--white, #fff);
+    font-weight: 600;
+    white-space: nowrap;
+    position: relative;
+    user-select: none;
+}
+
+.sortable {
+    cursor: pointer;
+}
+
+.sortable:hover {
+    filter: brightness(0.95);
+}
+
+.sortIcon {
+    margin-left: 6px;
+    font-size: 11px;
+    opacity: 0.85;
+}
+
+.row {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.row:nth-child(odd) {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.row:hover {
+    background-color: var(--main-light, rgba(13, 110, 253, 0.08));
+}
+
+.cell {
+    font-weight: bold;
+}
+
+.checkboxCell {
+    width: 42px;
+    text-align: center;
+}
+
+.empty {
+    text-align: center;
+    padding: 24px;
+    color: #999;
+    font-weight: 500;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 16px;
+    padding: 12px 4px;
+    flex-wrap: wrap;
+    font-size: 13px;
+    color: var(--dark-900, #333);
+}
+
+.perPage {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.perPage select {
+    padding: 4px 8px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 6px;
+    background: var(--white, #fff);
+    cursor: pointer;
+}
+
+.pageNav {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.pageButton {
+    border: none;
+    background: transparent;
+    border-radius: 6px;
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--dark-900, #333);
+    transition: background 0.15s ease;
+}
+
+.pageButton:hover:not(:disabled) {
+    background: rgba(0, 0, 0, 0.06);
+}
+
+.pageButton:disabled {
+    opacity: 0.35;
+    cursor: default;
+}
+
+.range {
+    white-space: nowrap;
+}

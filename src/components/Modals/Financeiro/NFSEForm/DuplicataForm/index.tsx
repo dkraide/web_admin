@@ -88,6 +88,32 @@ export default function NFSEForm({ isOpen, id, setClose, color }: props) {
             setLoading(false);
         }
     };
+    const handleXml = async () => {
+        setLoading(true);
+        try {
+            const response = await api.get(`/NFSe/${objeto.id}/Xml`, {
+                responseType: 'blob', // Importante para receber o XML como blob
+            });
+
+            // Cria um URL temporário para o XML
+            const xmlBlob = new Blob([response.data], { type: 'application/xml' });
+            const xmlUrl = window.URL.createObjectURL(xmlBlob);
+
+            // Força o download do arquivo XML
+            const link = document.createElement('a');
+            link.href = xmlUrl;
+            link.download = `NFSe_${objeto.numeroNFSE || objeto.id}.xml`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(xmlUrl);
+        } catch (err) {
+            const axiosError = err as AxiosError;
+            toast.error(`Erro ao baixar XML da NFSe. ${axiosError.response?.data || axiosError.message}`);
+        } finally {
+            setLoading(false);
+        }
+    };
     const handleCancelar = async () => {
         setLoading(true);
         await api.post(`/NFSe/${objeto.id}/Cancelar`).then(({ data }) => {
@@ -131,6 +157,7 @@ export default function NFSEForm({ isOpen, id, setClose, color }: props) {
                         <div className={styles.protocolo} style={{ justifyContent: 'flex-end' }}>
                             <CustomButton onClick={handleAtualizar}>Atualizar</CustomButton>
                             <CustomButton onClick={handleImprimir}>Imprimir</CustomButton>
+                            <CustomButton hidden={!['AUTORIZADA', 'CANCELADA'].includes(objeto.statusNFSE?.toUpperCase() ?? '')} onClick={handleXml}>Xml</CustomButton>
                             <CustomButton hidden={objeto.statusNFSE?.toUpperCase() === 'CANCELADA'} onClick={handleCancelar}>Cancelar</CustomButton>
                             <CustomButton onClick={handleParametrizar}>Parametrizar</CustomButton>
                         </div>

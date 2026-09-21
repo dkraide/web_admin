@@ -179,8 +179,10 @@ export default function EnviarEmailForm({ isOpen, id, setClose, color }: props) 
                         <InputGroup width={'15%'} value={format(new Date(objeto.dataVencimento), 'dd/MM/yy')} title={'Vencimento'} />
                         <InputGroup width={'15%'} value={objeto.valor.toFixed(2)} title={'Valor'} />
                     </div>
-                    <div className={styles.protocolo} hidden={!objeto.protocolo}>
+                    <div className={styles.protocolo}>
                         <InputGroup onChange={({currentTarget}) => {setEmail({...email, para: currentTarget.value})}}  value={email?.para} title={'Para (coloque os emails separados por virgula se for mais de um)'}/>
+                    </div>
+                    <div className={styles.protocolo} hidden={!objeto.protocolo}>
                         <InputGroup onChange={({currentTarget}) => {setEmail({...email, assunto: currentTarget.value})}}  width={'50%'} value={email?.assunto} title={'Assunto'}/>
                         <SelectSimNao width={'20%'} selected={email.enviaBoleto} title={'Anexa Boleto'} setSelected={(v) => {setEmail({...email, enviaBoleto: v})}}/>
                         <SelectSimNao width={'20%'} selected={email.enviaNFSE} title={'Anexa NFSe'} setSelected={(v) => {setEmail({...email, enviaNFSE: v})}}/>
