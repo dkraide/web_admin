@@ -148,7 +148,7 @@ export default function EnviarEmailForm({ isOpen, id, setClose, color }: props) 
             corpo,
             para: prev.para || objeto?.empresa?.email,
             enviaBoleto: layout !== 'nfse',
-            enviaNFSE: layout !== 'boleto',
+            enviaNFSE: layout !== 'boleto' && !!objeto.protocolo,
         }))
     }, [objeto, layout])
 
@@ -195,7 +195,7 @@ export default function EnviarEmailForm({ isOpen, id, setClose, color }: props) 
                     <div className={styles.protocolo}>
                         <InputGroup onChange={({currentTarget}) => {setEmail({...email, para: currentTarget.value})}}  value={email?.para} title={'Para (coloque os emails separados por virgula se for mais de um)'}/>
                     </div>
-                    <div className={styles.protocolo} hidden={!objeto.protocolo}>
+                    <div className={styles.protocolo}>
                         <InputGroup onChange={({currentTarget}) => {setEmail({...email, assunto: currentTarget.value})}}  width={'50%'} value={email?.assunto} title={'Assunto'}/>
                         <SelectSimNao width={'20%'} selected={email.enviaBoleto} title={'Anexa Boleto'} setSelected={(v) => {setEmail({...email, enviaBoleto: v})}}/>
                         <SelectSimNao width={'20%'} selected={email.enviaNFSE} title={'Anexa NFSe'} setSelected={(v) => {setEmail({...email, enviaNFSE: v})}}/>
