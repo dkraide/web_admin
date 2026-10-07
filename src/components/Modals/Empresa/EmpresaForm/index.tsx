@@ -35,6 +35,12 @@ type Aba = 'cadastro' | 'cobranca'
 
 const PLANOS = ['Teste', 'Mensal', 'Semestral', 'Anual'] as const
 
+const TIPOS_SISTEMA: { value: IEmpresa['tipoSistema']; label: string }[] = [
+    { value: 'PADRAO', label: 'Padrão' },
+    { value: 'RESTAURANTE', label: 'Restaurante' },
+    { value: 'LOJA_ROUPA', label: 'Loja de roupa' },
+]
+
 export default function EmpresaForm({ user, isOpen, id, setClose, color }: Props) {
 
     const { register, getValues, setValue, handleSubmit, formState: { errors } } = useForm()
@@ -60,12 +66,12 @@ export default function EmpresaForm({ user, isOpen, id, setClose, color }: Props
             api.get(`/Empresa/List`)
                 .then(({ data }: AxiosResponse) => {
                     const maiorId = (data as IEmpresa[]).reduce((max, e) => e.id > max ? e.id : max, 0)
-                    setObjeto({ statusPagamento: true, id: maiorId + 1 } as IEmpresa)
+                    setObjeto({ statusPagamento: true, tipoSistema: 'PADRAO', id: maiorId + 1 } as IEmpresa)
                     setLoading(false)
                 })
                 .catch((err: AxiosError) => {
                     toast.error(`Erro ao gerar código da empresa. ${err.message}`)
-                    setObjeto({ statusPagamento: true } as IEmpresa)
+                    setObjeto({ statusPagamento: true, tipoSistema: 'PADRAO' } as IEmpresa)
                     setLoading(false)
                 })
         }
@@ -191,6 +197,17 @@ export default function EmpresaForm({ user, isOpen, id, setClose, color }: Props
                             </div>
                             <InputForm defaultValue={objeto.inscricaoEstadual} width={'25%'} title={'IE / RG'} errors={errors} inputName={"inscricaoEstadual"} register={register} />
                             <InputForm defaultValue={objeto.inscricaoMunicipal} width={'25%'} title={'Insc. Municipal'} errors={errors} inputName={"inscricaoMunicipal"} register={register} />
+                            <div className={styles.field} style={{ width: '25%' }}>
+                                <label className={styles.label} htmlFor="empresa-tipo-sistema">Tipo de sistema</label>
+                                <select
+                                    id="empresa-tipo-sistema"
+                                    className={styles.select}
+                                    value={objeto.tipoSistema ?? 'PADRAO'}
+                                    onChange={(e) => setObjeto({ ...objeto, tipoSistema: e.target.value as IEmpresa['tipoSistema'] })}
+                                >
+                                    {TIPOS_SISTEMA.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+                                </select>
+                            </div>
                             <InputForm defaultValue={objeto.nomeFantasia} width={'50%'} title={'Nome Fantasia'} errors={errors} inputName={"nomeFantasia"} register={register} />
                             <InputForm defaultValue={objeto.razaoSocial} width={'50%'} title={'Razão Social'} errors={errors} inputName={"razaoSocial"} register={register} />
                             <InputForm defaultValue={objeto.endereco} width={'50%'} title={'Logradouro'} errors={errors} inputName={"endereco"} register={register} />

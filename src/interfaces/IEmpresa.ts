@@ -43,6 +43,8 @@ export default interface IEmpresa {
     slug: string
     // Novos campos de automação
     plano: 'Teste' | 'Mensal' | 'Semestral' | 'Anual'
+    // ramo do sistema: define quais telas/ações o cliente enxerga (a API serializa o enum como texto)
+    tipoSistema: 'PADRAO' | 'RESTAURANTE' | 'LOJA_ROUPA'
     geraBoleto: boolean
     geraNfse: boolean
     enviaEmail: boolean
