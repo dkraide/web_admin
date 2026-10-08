@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styles from './styles.module.scss';
 import { useContext, useEffect, useState } from 'react';
-import { faUser, faArrowLeft, faBars, faRightFromBracket, faArrowRight, faPowerOff, faPerson, faQuestion, faTasks } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faArrowLeft, faBars, faRightFromBracket, faArrowRight, faPowerOff, faPerson, faQuestion, faTasks, faDownload } from '@fortawesome/free-solid-svg-icons';
 import { AuthContext } from '@/contexts/AuthContext';
 import IUsuario from '@/interfaces/IUsuario';
 import SelectEmpresa from '@/components/Selects/SelectEmpresa';
@@ -132,6 +132,9 @@ export default function SideBar({ ...props }) {
                             <SubMenu hidden={!isInRole(['ADMINISTRADOR', 'SUPORTE'])} rootStyles={subMenuStyle} icon={<FontAwesomeIcon icon={faTasks} color={'var(--main)'} />} label="Suporte">
                                 <MenuItem href={'/chamados'} >Chamados</MenuItem>
                                 <MenuItem href={'/pesquisa-satisfacao'} >Pesquisa de satisfação</MenuItem>
+                            </SubMenu>
+                            <SubMenu hidden={!isInRole(['ADMINISTRADOR'])} rootStyles={subMenuStyle} icon={<FontAwesomeIcon icon={faDownload} color={'var(--main)'} />} label="Downloads">
+                                <MenuItem href={'/arquivos'} >Arquivos</MenuItem>
                             </SubMenu>
                             <SubMenu hidden={!isInRole(['SUPERVISOR', 'ADMINISTRADOR'])} href={'/parceiros'} rootStyles={subMenuStyle} icon={<FontAwesomeIcon icon={faPerson} color={'var(--main)'} />} label="Parceiros">
                             </SubMenu>
