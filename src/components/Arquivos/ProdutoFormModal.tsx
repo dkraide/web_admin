@@ -16,7 +16,7 @@ interface Props {
     edit?: DownloadProduto | null;
 }
 
-const CATEGORIAS = ['Instalador', 'Atualizador', 'Driver', 'Manual', 'Outro'];
+const CATEGORIAS = ['Instalador', 'Acesso remoto', 'Atualizador', 'Driver', 'Manual', 'Outro'];
 
 const slugify = (s: string) =>
     s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
