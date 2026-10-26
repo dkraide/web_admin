@@ -114,3 +114,16 @@ body {
 #__next {
   height: 100% !important;
 }
+// Editor de tutoriais (TipTap)
+.ProseMirror {
+  img { max-width: 100%; height: auto; }
+  iframe { max-width: 100%; }
+  blockquote { border-left: 4px solid #ced4da; margin-left: 0; padding-left: 1rem; color: #6c757d; }
+  p.is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    color: #adb5bd;
+    float: left;
+    height: 0;
+    pointer-events: none;
+  }
+}

@@ -132,6 +132,7 @@ export default function SideBar({ ...props }) {
                             <SubMenu hidden={!isInRole(['ADMINISTRADOR', 'SUPORTE'])} rootStyles={subMenuStyle} icon={<FontAwesomeIcon icon={faTasks} color={'var(--main)'} />} label="Suporte">
                                 <MenuItem href={'/chamados'} >Chamados</MenuItem>
                                 <MenuItem href={'/pesquisa-satisfacao'} >Pesquisa de satisfação</MenuItem>
+                                {isInRole(['ADMINISTRADOR']) && <MenuItem href={'/tutoriais'} >Tutoriais</MenuItem>}
                             </SubMenu>
                             <SubMenu hidden={!isInRole(['ADMINISTRADOR'])} rootStyles={subMenuStyle} icon={<FontAwesomeIcon icon={faDownload} color={'var(--main)'} />} label="Downloads">
                                 <MenuItem href={'/arquivos'} >Arquivos</MenuItem>
