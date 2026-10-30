@@ -35,6 +35,7 @@ export interface IFoodMerchant {
   id: string;
   name: string;
   corporateName: string;
+  empresaId?: number | null; // vínculo existente em ifood_integracoes
 }
 
 export interface IFoodStatusMessage {

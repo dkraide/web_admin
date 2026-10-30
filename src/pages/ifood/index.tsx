@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
+import { api } from "@/services/apiClient";
+import IEmpresa from "@/interfaces/IEmpresa";
 import { ifoodService } from "@/services/ifoodService";
 import {
   IFoodMerchant,
@@ -6,13 +8,6 @@ import {
   IFoodStatusLoja,
 } from "@/interfaces/ifood";
 import styles from "./styles.module.scss";
-
-type LogEntrada = {
-  id: string;
-  acao: string;
-  detalhes?: string;
-  data: string;
-};
 
 export default function IFoodIntegracaoPage() {
   const [merchants, setMerchants] = useState<IFoodMerchant[]>([]);
@@ -31,32 +26,52 @@ export default function IFoodIntegracaoPage() {
     useState(false);
   const [erroDisponibilidade, setErroDisponibilidade] = useState("");
 
-  const [logs, setLogs] = useState<LogEntrada[]>([]);
+  const [empresas, setEmpresas] = useState<IEmpresa[]>([]);
+  const [vinculos, setVinculos] = useState<Record<string, number>>({});
+  const [empresaEscolhida, setEmpresaEscolhida] = useState("");
+  const [vinculando, setVinculando] = useState(false);
+  const [erroVinculo, setErroVinculo] = useState("");
 
-  // Grava cada etapa do processo: no histórico local (visível ao usuário)
-  // e no backend, para auditoria (ver observação sobre ifoodService.registrarLogAsync).
-  const registrarLog = useCallback(
-    async (acao: string, merchantId?: string, detalhesLog?: string) => {
-      const entrada: LogEntrada = {
-        id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
-        acao,
-        detalhes: detalhesLog,
-        data: new Date().toLocaleString("pt-BR"),
-      };
-      setLogs((prev) => [entrada, ...prev]);
+  useEffect(() => {
+    api
+      .get<IEmpresa[]>("/Empresa/List")
+      .then(({ data }) => setEmpresas(data))
+      .catch(() => setErroVinculo("Não foi possível carregar as empresas."));
+  }, []);
 
-      try {
-        await ifoodService.registrarLogAsync({
-          merchantId: merchantId ?? "",
-          acao,
-          detalhes: detalhesLog,
-        });
-      } catch {
-        // Falha ao gravar o log não deve travar o fluxo do usuário.
+  const empresaDoMerchant = (merchant: IFoodMerchant | null) =>
+    merchant ? vinculos[merchant.id] ?? merchant.empresaId ?? null : null;
+
+  const vincularEmpresa = useCallback(async () => {
+    if (!merchantSelecionado || !empresaEscolhida) return;
+    setVinculando(true);
+    setErroVinculo("");
+    try {
+      const empresaId = Number(empresaEscolhida);
+      const existentes = await ifoodService.listarIntegracoesAsync(empresaId);
+      const jaVinculado = (existentes.dados ?? []).some(
+        (i) => i.merchantId === merchantSelecionado.id
+      );
+      if (!jaVinculado) {
+        const resposta = await ifoodService.vincularEmpresaAsync(
+          empresaId,
+          merchantSelecionado.id
+        );
+        if (!resposta.sucesso) {
+          throw new Error(
+            resposta.erro || "Não foi possível vincular a empresa."
+          );
+        }
       }
-    },
-    []
-  );
+      setVinculos((prev) => ({ ...prev, [merchantSelecionado.id]: empresaId }));
+    } catch (erro) {
+      setErroVinculo(
+        erro instanceof Error ? erro.message : "Erro ao vincular empresa."
+      );
+    } finally {
+      setVinculando(false);
+    }
+  }, [merchantSelecionado, empresaEscolhida]);
 
   const carregarMerchants = useCallback(async () => {
     setCarregandoMerchants(true);
@@ -67,20 +82,14 @@ export default function IFoodIntegracaoPage() {
         throw new Error(resposta.erro || "Não foi possível listar as lojas.");
       }
       setMerchants(resposta.dados ?? []);
-      await registrarLog(
-        "Listagem de lojas vinculadas",
-        undefined,
-        `${resposta.dados?.length ?? 0} loja(s) encontrada(s)`
-      );
     } catch (erro) {
       const mensagem =
         erro instanceof Error ? erro.message : "Erro ao listar lojas.";
       setErroMerchants(mensagem);
-      await registrarLog("Falha ao listar lojas", undefined, mensagem);
     } finally {
       setCarregandoMerchants(false);
     }
-  }, [registrarLog]);
+  }, []);
 
   useEffect(() => {
     carregarMerchants();
@@ -94,6 +103,8 @@ export default function IFoodIntegracaoPage() {
       setDisponibilidade(null);
       setErroDetalhes("");
       setErroDisponibilidade("");
+      setErroVinculo("");
+      setEmpresaEscolhida("");
       setCarregandoDetalhes(true);
 
       try {
@@ -104,64 +115,44 @@ export default function IFoodIntegracaoPage() {
           );
         }
         setDetalhes(resposta.dados);
-        await registrarLog(
-          "Consulta de detalhes da loja",
-          merchant.id,
-          merchant.name
-        );
       } catch (erro) {
         const mensagem =
           erro instanceof Error
             ? erro.message
             : "Erro ao obter detalhes da loja.";
         setErroDetalhes(mensagem);
-        await registrarLog(
-          "Falha ao consultar detalhes da loja",
-          merchant.id,
-          mensagem
-        );
       } finally {
         setCarregandoDetalhes(false);
       }
     },
-    [registrarLog]
+    []
   );
 
   const consultarDisponibilidade = useCallback(async () => {
-    if (!merchantSelecionado) return;
+    const empresaId = empresaDoMerchant(merchantSelecionado);
+    if (!merchantSelecionado || empresaId == null) return;
     setCarregandoDisponibilidade(true);
     setErroDisponibilidade("");
     try {
       const resposta = await ifoodService.consultarDisponibilidadeAsync(
-        merchantSelecionado.id
+        empresaId
       );
-      console.log("Resposta da disponibilidade:", resposta);
       if (!resposta.sucesso) {
         throw new Error(
           resposta.erro || "Não foi possível consultar a disponibilidade."
         );
       }
       setDisponibilidade(resposta.dados[0]);
-      await registrarLog(
-        "Consulta de disponibilidade",
-        merchantSelecionado.id,
-        merchantSelecionado.name
-      );
     } catch (erro) {
       const mensagem =
         erro instanceof Error
           ? erro.message
           : "Erro ao consultar disponibilidade.";
       setErroDisponibilidade(mensagem);
-      await registrarLog(
-        "Falha ao consultar disponibilidade",
-        merchantSelecionado.id,
-        mensagem
-      );
     } finally {
       setCarregandoDisponibilidade(false);
     }
-  }, [merchantSelecionado, registrarLog]);
+  }, [merchantSelecionado, vinculos]);
 
   return (
     <div className={styles.pagina}>
@@ -237,12 +228,49 @@ export default function IFoodIntegracaoPage() {
                 <button
                   className={styles.botaoPrimario}
                   onClick={consultarDisponibilidade}
-                  disabled={carregandoDisponibilidade}
+                  disabled={carregandoDisponibilidade || empresaDoMerchant(merchantSelecionado) == null}
                 >
                   {carregandoDisponibilidade
                     ? "Consultando..."
                     : "Consultar disponibilidade"}
                 </button>
+              </div>
+
+              <div className={styles.blocoDetalhe}>
+                <h3>Empresa KRDSystem</h3>
+                {erroVinculo && (
+                  <div className={styles.alertaErro}>{erroVinculo}</div>
+                )}
+                {empresaDoMerchant(merchantSelecionado) != null ? (
+                  <p>
+                    Vinculada a:{" "}
+                    {empresas.find(
+                      (e) => e.id === empresaDoMerchant(merchantSelecionado)
+                    )?.nomeFantasia ??
+                      `Empresa #${empresaDoMerchant(merchantSelecionado)}`}
+                  </p>
+                ) : (
+                  <>
+                    <select
+                      value={empresaEscolhida}
+                      onChange={(e) => setEmpresaEscolhida(e.target.value)}
+                    >
+                      <option value="">Selecione a empresa</option>
+                      {empresas.map((e) => (
+                        <option key={e.id} value={e.id}>
+                          {e.nomeFantasia}
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      className={styles.botaoPrimario}
+                      onClick={vincularEmpresa}
+                      disabled={vinculando || !empresaEscolhida}
+                    >
+                      {vinculando ? "Vinculando..." : "Vincular empresa"}
+                    </button>
+                  </>
+                )}
               </div>
 
               {erroDisponibilidade && (
@@ -353,26 +381,6 @@ export default function IFoodIntegracaoPage() {
           )}
         </main>
 
-        <aside className={styles.painelLogs}>
-          <h2>Histórico da sessão</h2>
-          {logs.length === 0 ? (
-            <div className={styles.vazio}>Nenhuma ação registrada ainda.</div>
-          ) : (
-            <ul className={styles.listaLogs}>
-              {logs.map((log) => (
-                <li key={log.id} className={styles.itemLog}>
-                  <span className={styles.itemLogData}>{log.data}</span>
-                  <span className={styles.itemLogAcao}>{log.acao}</span>
-                  {log.detalhes && (
-                    <span className={styles.itemLogDetalhes}>
-                      {log.detalhes}
-                    </span>
-                  )}
-                </li>
-              ))}
-            </ul>
-          )}
-        </aside>
       </div>
     </div>
   );

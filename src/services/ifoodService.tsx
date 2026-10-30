@@ -4,18 +4,12 @@
 import { api } from "./apiClient";
 import {
   IFoodMerchant,
-  IFoodMerchantDetail, // <- usar este tipo, não IFoodMerchant[]
+  IFoodIntegracaoStatus,
+  IFoodMerchantDetail,
   IFoodStatusLoja,
 } from "@/interfaces/ifood";
 
 type ApiResult<T> = { sucesso: boolean; dados: T; erro: string };
-
-// Adicionar em interfaces/ifood.ts (ou onde ficam os DTOs de request):
-export interface IFoodRegistrarLogDto {
-  merchantId: string;
-  acao: string;
-  detalhes?: string;
-}
 
 export const ifoodService = {
   async listarMerchantsAsync() {
@@ -34,16 +28,26 @@ export const ifoodService = {
   },
 
   // NOVO: consulta de disponibilidade da loja
-  async consultarDisponibilidadeAsync(merchantId: string) {
+  async consultarDisponibilidadeAsync(empresaId: number) {
     const { data } = await api.get<ApiResult<IFoodStatusLoja>>(
-      `/ifood/empresas/0/integracoes/${merchantId}/status-loja`
+      `/ifood/empresas/${empresaId}/status-loja`
     );
     return data;
   },
 
-  // NOVO: grava, no backend, cada ação realizada no processo (auditoria)
-  async registrarLogAsync(log: IFoodRegistrarLogDto) {
-    const { data } = await api.post<ApiResult<boolean>>(`/ifood/logs`, log);
+  async listarIntegracoesAsync(empresaId: number) {
+    const { data } = await api.get<ApiResult<IFoodIntegracaoStatus[]>>(
+      `/ifood/empresas/${empresaId}/integracoes`
+    );
+    return data;
+  },
+
+  // Vincula o merchant a uma empresa KRDSystem (gera a linha em ifood_integracoes)
+  async vincularEmpresaAsync(empresaId: number, merchantId: string) {
+    const { data } = await api.post<ApiResult<IFoodIntegracaoStatus>>(
+      `/ifood/empresas/${empresaId}/integracoes`,
+      { merchantId }
+    );
     return data;
   },
 };
